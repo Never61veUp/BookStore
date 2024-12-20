@@ -39,5 +39,36 @@ public class Book : Entity<Guid>, IAggregateRoot
         return Result.Success(
             new Book(id, title, description, price, authorId, categoryId, stockCount));
     }
-    
+
+    public Result<Book> ChangePrice(Price newPrice)
+    {
+        if(Price == newPrice)
+            return Result.Failure<Book>("Price is invalid");
+        
+        Price = newPrice;
+        return Result.Success(this);
+    }
+    public Result<Book> ChangeTitle(string newTitle)
+    {
+        if(string.IsNullOrWhiteSpace(newTitle))
+            return Result.Failure<Book>("Title is required");
+        if(Title == newTitle)
+            return Result.Failure<Book>("Title is invalid");
+        
+        Title = newTitle;
+        return Result.Success(this);
+    }
+    public Result<Book> DecreaseStockCountByOne()
+    {
+        if(StockCount == 0)
+            return Result.Failure<Book>("Stock count is 0");
+        
+        StockCount--;
+        return Result.Success(this);
+    }
+    public Result<Book> IncreaseStockCount(int count)
+    {
+        StockCount += count;
+        return Result.Success(this);
+    }
 }
