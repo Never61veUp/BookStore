@@ -5,7 +5,7 @@ namespace BookStore.Core.Model.Catalog;
 
 public class Author : Entity<Guid>
 {
-    public Author(Guid id, FullName fullName, DateTime birthDate, string biography) : base(id)
+    private Author(Guid id, FullName fullName, DateTime birthDate, string biography) : base(id)
     {
         FullName = fullName;
         BirthDate = birthDate;
