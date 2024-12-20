@@ -5,14 +5,14 @@ namespace BookStore.Core.Model.ValueObjects;
 
 public class Price : ValueObject
 {
-    private Price(int value)
+    private Price(decimal value)
     {
         Value = value;
     }
     
     public decimal Value { get; }
 
-    public static Result<Price> Create(int value)
+    public static Result<Price> Create(decimal value)
     {
         if(value < 0)
             return Result.Failure<Price>("Price cannot be negative");
