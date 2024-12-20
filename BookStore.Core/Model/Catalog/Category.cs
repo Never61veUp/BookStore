@@ -6,7 +6,8 @@ public class Category : Entity<Guid>
 {
     private Category(Guid id, string name, Guid? parentCategoryId) : base(id)
     {
-        
+        Name = name;
+        ParentCategoryId = parentCategoryId;
     }
     
     public string Name { get; private set; }
