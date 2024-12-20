@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-BookStore.PostgreSql.MigrationService-3b74e2fc-49b7-4881-9c19-b703d73404ab</UserSecretsId>
+        <RootNamespace>BookStore.PostgreSql.MigrationService</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0"/>
+        <PackageReference Include="OpenTelemetry.Api" Version="1.9.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BookStore.Host\BookStore.Host.csproj" />
+      <ProjectReference Include="..\BookStore.PostgreSql\BookStore.PostgreSql.csproj" />
+    </ItemGroup>
+</Project>

@@ -14,10 +14,13 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0" />
+    <PackageReference Include="Aspire.Npgsql" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\BookStore.Host\BookStore.Host.csproj" />
+    <ProjectReference Include="..\..\BookStore.PostgreSql.MigrationServicee\BookStore.PostgreSql.MigrationServicee.csproj" />
   </ItemGroup>
 
 </Project>
