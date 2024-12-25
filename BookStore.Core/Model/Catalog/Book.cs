@@ -20,6 +20,8 @@ public class Book : Entity<Guid>, IAggregateRoot
     public Guid AuthorId { get; private set; }
     public Guid CategoryId { get; private set; }
     public int StockCount { get; private set; }
+    public FullName? AuthorFullName { get; private set; }
+    public string? CategoryName { get; private set; }
 
     public static Result<Book> Create(Guid id, string title, string description, Price price, Guid authorId,
         Guid categoryId, int stockCount)
