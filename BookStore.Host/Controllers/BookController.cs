@@ -36,6 +36,9 @@ public class BookController : ControllerBase
         
         var book = Book.Create(Guid.NewGuid(), bookRequest.Title, bookRequest.Description, 
             price.Value, bookRequest.AuthorId, bookRequest.CategoryId, bookRequest.StockCount);
+        if(book.IsFailure)
+            return BadRequest(book.Error);
+        await _bookService.AddBookAsync(book.Value);
         return Ok(book);
     }
 }

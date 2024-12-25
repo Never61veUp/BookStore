@@ -1,4 +1,5 @@
 using BookStore.Application.Services;
+using BookStore.Core.Model.Catalog;
 using BookStore.PostgreSql;
 using BookStore.PostgreSql.Mapper;
 using BookStore.PostgreSql.Repositories;
@@ -17,8 +18,16 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+
 builder.Services.AddAutoMapper(typeof(AuthorProfile));
-builder.Services.AddAutoMapper(typeof(BookProfile));
+builder.Services.AddScoped<BookProfile>(sp =>
+{
+    var dbContext = sp.GetRequiredService<BookStoreDbContext>();
+    return new BookProfile(dbContext);
+});
+builder.Services.AddAutoMapper(typeof(BookProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(CategoryProfile));
 
 builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb");

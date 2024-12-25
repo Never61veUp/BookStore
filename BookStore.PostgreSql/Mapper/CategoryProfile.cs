@@ -13,7 +13,7 @@ public class CategoryProfile : Profile
                 Category.Create(
                     entity.Id,
                     entity.Name,
-                    entity.ParentCategory.Id
+                    entity.ParentCategory == null ? null : entity.ParentCategory.Id
                 ).Value);
         
         CreateMap<Category, CategoryEntity>()

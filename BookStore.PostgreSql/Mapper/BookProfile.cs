@@ -6,7 +6,7 @@ namespace BookStore.PostgreSql.Mapper;
 
 public class BookProfile : Profile
 {
-    public BookProfile()
+    public BookProfile(BookStoreDbContext context)
     {
         CreateMap<BookEntity, Book>()
             .ConstructUsing(entity => 
@@ -28,9 +28,12 @@ public class BookProfile : Profile
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.StockCount, opt => opt.MapFrom(src => src.StockCount))
-            .ForPath(dest => dest.Author.Id, opt => opt.MapFrom(src => src.AuthorId)) // Используем ForPath для вложенных свойств
-            .ForPath(dest => dest.Category.Id, opt => opt.MapFrom(src => src.CategoryId)) // Используем ForPath для вложенных свойств
-            .ForPath(dest => dest.Author, opt => opt.Ignore())
-            .ForPath(dest => dest.Category, opt => opt.Ignore());
+            .ForPath(dest => dest.Author, opt => opt.Ignore()) // Игнорируем Author, чтобы заполнить его вручную
+            .ForPath(dest => dest.Category, opt => opt.Ignore()) // То же для Category
+            .AfterMap((src, dest) =>
+            {
+                    dest.Author = context.Authors.Find(src.AuthorId);
+                    dest.Category = context.Categories.Find(src.CategoryId);
+            });
     }
 }
