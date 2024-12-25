@@ -22,12 +22,7 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 
 builder.Services.AddAutoMapper(typeof(AuthorProfile));
-builder.Services.AddScoped<BookProfile>(sp =>
-{
-    var dbContext = sp.GetRequiredService<BookStoreDbContext>();
-    return new BookProfile(dbContext);
-});
-builder.Services.AddAutoMapper(typeof(BookProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(BookProfile));
 builder.Services.AddAutoMapper(typeof(CategoryProfile));
 
 builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb");
