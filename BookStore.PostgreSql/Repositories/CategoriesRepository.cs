@@ -27,7 +27,6 @@ public class CategoriesRepository : ICategoriesRepository
         var categoryEntity = await _dbContext.Categories.FindAsync(id);
         return _mapper.Map<Category>(categoryEntity);
     }
-
     public async Task<bool> AddCategoryAsync(Category category)
     {
         var categoryEntity = _mapper.Map<CategoryEntity>(category);

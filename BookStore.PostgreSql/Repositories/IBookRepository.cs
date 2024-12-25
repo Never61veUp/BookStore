@@ -1,4 +1,5 @@
 ﻿using BookStore.Core.Model.Catalog;
+using CSharpFunctionalExtensions;
 
 namespace BookStore.PostgreSql.Repositories;
 
@@ -6,7 +7,8 @@ public interface IBookRepository
 {
     Task<List<Book>> GetAllBooksAsync();
     Task<Book> GetBookByIdAsync(Guid id);
-    Task<bool> AddBookAsync(Book book);
+    Task<List<Book>> GetBooksByCategoryAsync(Guid categoryId);
+    Task<Result> AddBookAsync(Book book);
     Task<bool> UpdateBookAsync(Book book);
     Task<bool> DeleteBookAsync(Guid id);
 
