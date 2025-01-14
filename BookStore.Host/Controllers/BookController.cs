@@ -23,7 +23,13 @@ public class BookController : ControllerBase
     [HttpGet("GetBookById/{id}")]
     public async Task<IActionResult> GetBookByIdAsync(Guid bookId)
     {
-        var book = _bookService.GetBookByIdAsync(bookId);
+        var book = await _bookService.GetBookByIdAsync(bookId);
+        return Ok(book);
+    }
+    [HttpGet("GetBookById")]
+    public async Task<IActionResult> GetBookByCategoryIdAsync(Guid bookId)
+    {
+        var book = await _bookService.GetBooksByCategory(bookId);
         return Ok(book);
     }
 
@@ -36,7 +42,12 @@ public class BookController : ControllerBase
         
         var book = Book.Create(Guid.NewGuid(), bookRequest.Title, bookRequest.Description, 
             price.Value, bookRequest.AuthorId, bookRequest.CategoryId, bookRequest.StockCount);
-        return Ok(book);
+        if(book.IsFailure)
+            return BadRequest(book.Error);
+        var addBookTask = await _bookService.AddBookAsync(book.Value);
+        if(addBookTask.IsFailure)
+            return BadRequest(addBookTask.Error);
+        return Ok(book.Value);
     }
 }
 public record BookRequest(string Title, string Description, decimal Price, Guid AuthorId, Guid CategoryId, int StockCount);

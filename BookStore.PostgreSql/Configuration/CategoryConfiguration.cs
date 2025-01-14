@@ -14,6 +14,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<CategoryEntity>
         builder.HasKey(x => x.Id);
         
         builder.Property(x => x.Name).IsRequired().HasColumnType("varchar(100)");
-        builder.HasOne(x => x.ParentCategory);
+        builder.HasOne(x => x.ParentCategory).WithMany().IsRequired(false);
     }
 }

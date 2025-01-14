@@ -20,8 +20,16 @@ public class BookConfiguration : IEntityTypeConfiguration<BookEntity>
             b.Property(x => x.Value).HasColumnName("Price");
         });
         
-        builder.HasOne(x => x.Author);
-        builder.HasOne(x => x.Category);
+        builder.HasOne(x => x.Author)
+            .WithMany()
+            .HasForeignKey(x => x.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(x => x.Category)
+            .WithMany()
+            .HasForeignKey(x => x.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
         builder.Property(x => x.StockCount).HasDefaultValue(0);
         
 
