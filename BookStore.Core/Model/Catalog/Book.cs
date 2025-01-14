@@ -16,6 +16,7 @@ public class Book : Entity<Guid>, IAggregateRoot
     }
     public string Title { get; private set; }
     public string Description { get; private set; }
+    public Image? Image { get; private set; }
     public Price Price { get; private set; }
     public Guid AuthorId { get; private set; }
     public Guid CategoryId { get; private set; }
@@ -71,6 +72,13 @@ public class Book : Entity<Guid>, IAggregateRoot
     public Result<Book> IncreaseStockCount(int count)
     {
         StockCount += count;
+        return Result.Success(this);
+    }
+    public Result<Book> AddImage(Image image)
+    {
+        if(Image != null)
+            return Result.Failure<Book>("Image is already added");
+        Image = image;
         return Result.Success(this);
     }
 }

@@ -77,6 +77,9 @@ namespace BookStore.PostgreSql.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageName")
+                        .HasColumnType("text");
+
                     b.Property<int>("StockCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")

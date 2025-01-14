@@ -9,10 +9,14 @@ namespace BookStore.Host.Controllers;
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
+    private readonly IImageService _imageService;
+    private readonly IYandexStorageService _yandexStorageService;
 
-    public BookController(IBookService bookService)
+    public BookController(IBookService bookService, IImageService imageService, IYandexStorageService yandexStorageService)
     {
         _bookService = bookService;
+        _imageService = imageService;
+        _yandexStorageService = yandexStorageService;
     }
 
     [HttpGet("GetBooks")]
@@ -20,13 +24,13 @@ public class BookController : ControllerBase
     {
         return Ok(await _bookService.GetAllBooksAsync());
     }
-    [HttpGet("GetBookById/{id}")]
+    [HttpGet("GetBookById")]
     public async Task<IActionResult> GetBookByIdAsync(Guid bookId)
     {
         var book = await _bookService.GetBookByIdAsync(bookId);
         return Ok(book);
     }
-    [HttpGet("GetBookById")]
+    [HttpGet("GetBookByCategoryId")]
     public async Task<IActionResult> GetBookByCategoryIdAsync(Guid bookId)
     {
         var book = await _bookService.GetBooksByCategory(bookId);
@@ -34,7 +38,7 @@ public class BookController : ControllerBase
     }
 
     [HttpPost("AddBook")]
-    public async Task<IActionResult> AddBookAsync(BookRequest bookRequest)
+    public async Task<IActionResult> AddBookAsync([FromForm] BookRequest bookRequest)
     {
         var price = Price.Create(bookRequest.Price);
         if(price.IsFailure)
@@ -44,10 +48,38 @@ public class BookController : ControllerBase
             price.Value, bookRequest.AuthorId, bookRequest.CategoryId, bookRequest.StockCount);
         if(book.IsFailure)
             return BadRequest(book.Error);
+        
+        var imageResult =  Image.CreateImage(bookRequest.image.FileName, book.Value.Id);
+        if(imageResult.IsFailure)
+            return BadRequest(imageResult.Error);
+        
+        book.Value.AddImage(imageResult.Value);
+        
         var addBookTask = await _bookService.AddBookAsync(book.Value);
         if(addBookTask.IsFailure)
             return BadRequest(addBookTask.Error);
         return Ok(book.Value);
     }
+    [HttpPut("UpdateBook")]
+    public async Task<IActionResult> UpdateBook(Guid id, BookRequest bookRequest)
+    {
+        
+        var price = Price.Create(bookRequest.Price);
+        if(price.IsFailure)
+            return BadRequest(price.Error);
+        
+        var book = Book.Create(id, bookRequest.Title, bookRequest.Description, 
+            price.Value, bookRequest.AuthorId, bookRequest.CategoryId, bookRequest.StockCount);
+        if(book.IsFailure)
+            return BadRequest(book.Error);
+        await _bookService.UpdateBookAsync(id, book.Value);
+        return Ok(book.Value);
+    }
+    [HttpDelete("DeleteBook")]
+    public async Task<IActionResult> DeleteBook(Guid id)
+    {
+        var updateBookTask = await _bookService.DeleteBookAsync(id);
+        return Ok(updateBookTask);
+    }
 }
-public record BookRequest(string Title, string Description, decimal Price, Guid AuthorId, Guid CategoryId, int StockCount);
+public record BookRequest(string Title, string Description, decimal Price, Guid AuthorId, Guid CategoryId, int StockCount, IFormFile image);

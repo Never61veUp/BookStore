@@ -41,8 +41,12 @@ public class BookRepository : IBookRepository
     }
     public async Task<Book> GetBookByIdAsync(Guid id)
     {
-        var bookEntity = await _dbContext.Books.FirstOrDefaultAsync(x => x.Id == id);
-        return _mapper.Map<Book>(bookEntity);
+        var bookEntity = await _dbContext.Books
+            .Include(b => b.Author)
+            .Include(b => b.Category)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        var book = _mapper.Map<Book>(bookEntity);
+        return book;
     }
     public async Task<Result> AddBookAsync(Book book)
     {
@@ -61,14 +65,15 @@ public class BookRepository : IBookRepository
             Price = book.Price,
             Author = authorEntity,
             Category = categoryEntity,
-            StockCount = book.StockCount
+            StockCount = book.StockCount,
+            ImageName = book.Image.Name
         };
         await _dbContext.Books.AddAsync(bookEntity);
         return await _dbContext.SaveChangesAsync() > 0 
             ? Result.Success()
             : Result.Failure("Failed to add book");
     }
-    public async Task<bool> UpdateBookAsync(Book book)
+    public async Task<bool> UpdateBookAsync(Guid id, Book book)
     {
         var bookEntity = _mapper.Map<BookEntity>(book);
         _dbContext.Update(bookEntity);

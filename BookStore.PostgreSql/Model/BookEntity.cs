@@ -12,6 +12,7 @@ public class BookEntity : Entity<Guid>
     }
     public string Title { get; set; }
     public string Description { get; set; }
+    public string? ImageName { get; set; }
     public Price Price { get; set; }
     public AuthorEntity Author { get; set; }
     public CategoryEntity Category { get; set; }

@@ -21,11 +21,24 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 
+builder.Services.AddScoped<IYandexStorageService, YandexStorageService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
+
 builder.Services.AddAutoMapper(typeof(AuthorProfile));
 builder.Services.AddAutoMapper(typeof(BookProfile));
 builder.Services.AddAutoMapper(typeof(CategoryProfile));
 
 builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb");
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -36,6 +49,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowReactApp");
+
 
 app.UseHttpsRedirection();
 

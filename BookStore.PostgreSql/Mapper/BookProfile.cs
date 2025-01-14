@@ -18,7 +18,8 @@ public class BookProfile : Profile
                     entity.Author.Id,
                     entity.Category.Id,
                     entity.StockCount
-                ).Value);
+                ).Value).AfterMap((entity, book) => book.AddImage(Image.CreateImage(entity.ImageName, entity.Id).Value));
+        
 
         CreateMap<Book, BookEntity>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
