@@ -9,7 +9,7 @@ public interface IBookRepository
     Task<Book> GetBookByIdAsync(Guid id);
     Task<List<Book>> GetBooksByCategoryAsync(Guid categoryId);
     Task<Result> AddBookAsync(Book book);
-    Task<bool> UpdateBookAsync(Book book);
+    Task<bool> UpdateBookAsync(Guid id, Book book);
     Task<bool> DeleteBookAsync(Guid id);
 
 }
