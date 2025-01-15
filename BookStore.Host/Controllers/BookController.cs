@@ -1,4 +1,5 @@
-﻿using BookStore.Application.Services;
+﻿using System.Net.Mime;
+using BookStore.Application.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Core.Model.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -48,20 +49,24 @@ public class BookController : ControllerBase
             price.Value, bookRequest.AuthorId, bookRequest.CategoryId, bookRequest.StockCount);
         if(book.IsFailure)
             return BadRequest(book.Error);
+
+        if (bookRequest.Image != null)
+        {
+            var imageResult =  Image.CreateImage(bookRequest.Image.FileName, book.Value.Id);
+            if(imageResult.IsFailure)
+                return BadRequest(imageResult.Error);
         
-        var imageResult =  Image.CreateImage(bookRequest.image.FileName, book.Value.Id);
-        if(imageResult.IsFailure)
-            return BadRequest(imageResult.Error);
-        
-        book.Value.AddImage(imageResult.Value);
-        
+            book.Value.AddImage(imageResult.Value);
+        }
+
         var addBookTask = await _bookService.AddBookAsync(book.Value);
+        await _imageService.UploadImageAsync(bookRequest.Image, "11");
         if(addBookTask.IsFailure)
             return BadRequest(addBookTask.Error);
         return Ok(book.Value);
     }
     [HttpPut("UpdateBook")]
-    public async Task<IActionResult> UpdateBook(Guid id, BookRequest bookRequest)
+    public async Task<IActionResult> UpdateBook(Guid id, [FromForm] BookRequest bookRequest)
     {
         
         var price = Price.Create(bookRequest.Price);
@@ -72,6 +77,15 @@ public class BookController : ControllerBase
             price.Value, bookRequest.AuthorId, bookRequest.CategoryId, bookRequest.StockCount);
         if(book.IsFailure)
             return BadRequest(book.Error);
+        if (bookRequest.Image != null)
+        {
+            var imageResult =  Image.CreateImage(bookRequest.Image.FileName, book.Value.Id);
+            if(imageResult.IsFailure)
+                return BadRequest(imageResult.Error);
+        
+            book.Value.AddImage(imageResult.Value);
+            await _imageService.UploadImageAsync(bookRequest.Image, "11");
+        }
         await _bookService.UpdateBookAsync(id, book.Value);
         return Ok(book.Value);
     }
@@ -82,4 +96,4 @@ public class BookController : ControllerBase
         return Ok(updateBookTask);
     }
 }
-public record BookRequest(string Title, string Description, decimal Price, Guid AuthorId, Guid CategoryId, int StockCount, IFormFile image);
+public record BookRequest(string Title, string Description, decimal Price, Guid AuthorId, Guid CategoryId, int StockCount, IFormFile? Image);
