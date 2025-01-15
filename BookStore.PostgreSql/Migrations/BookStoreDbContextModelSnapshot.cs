@@ -127,6 +127,44 @@ namespace BookStore.PostgreSql.Migrations
                     b.ToTable("Category", (string)null);
                 });
 
+            modelBuilder.Entity("BookStore.PostgreSql.Model.UserEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Name", "BookStore.PostgreSql.Model.UserEntity.Name#FullName", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("FirstName");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("LastName");
+
+                            b1.Property<string>("MiddleName")
+                                .HasColumnType("text")
+                                .HasColumnName("MiddleName");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users", (string)null);
+                });
+
             modelBuilder.Entity("BookStore.PostgreSql.Model.BookEntity", b =>
                 {
                     b.HasOne("BookStore.PostgreSql.Model.AuthorEntity", "Author")

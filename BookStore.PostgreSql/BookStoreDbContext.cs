@@ -16,12 +16,14 @@ public class BookStoreDbContext : DbContext
     public DbSet<BookEntity> Books { get; set; }
     public DbSet<AuthorEntity> Authors { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
+    public DbSet<UserEntity> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new AuthorConfiguration());
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new BookConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
         
         base.OnModelCreating(modelBuilder);
     }

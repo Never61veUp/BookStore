@@ -1,6 +1,7 @@
 ﻿using BookStore.Application.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Core.Model.ValueObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers;
@@ -15,6 +16,7 @@ public class AuthorController : ControllerBase
     {
         _authorService = authorService;
     }
+    [Authorize]
 [HttpGet("GetAuthors")]
     public async Task<IActionResult> GetAuthors()
     {
@@ -22,6 +24,7 @@ public class AuthorController : ControllerBase
         return Ok(result);
     }
 [HttpPost("AddAuthor")]
+[Authorize]
     public async Task<IActionResult> AddAuthor(AuthorRequest request)
     {
         var fullName = FullName.Create(request.FirstName, request.LastName, request.MiddleName);
