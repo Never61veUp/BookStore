@@ -76,8 +76,6 @@ public class Book : Entity<Guid>, IAggregateRoot
     }
     public Result<Book> AddImage(Image image)
     {
-        if(Image != null)
-            return Result.Failure<Book>("Image is already added");
         Image = image;
         return Result.Success(this);
     }
