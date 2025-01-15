@@ -45,14 +45,20 @@ export const getBookById = async (bookId: string): Promise<Book> => {
     return await response.json();
 }
 
-export const updateBook = async (id: string, bookRequest: BookRequest) => {
+export const updateBook = async (id: string, bookRequest: BookRequest, file:File | null) => {
+    const formData = new FormData();
+    formData.append("Title", bookRequest.title);
+    formData.append("Description", bookRequest.description);
+    formData.append("Price", bookRequest.price.toString());
+    formData.append("AuthorId", bookRequest.authorId);
+    formData.append("CategoryId", bookRequest.categoryId);
+    formData.append("StockCount", bookRequest.stockCount.toString());
+    if(file != null)
+        formData.append("image", file);
     await fetch(`http://localhost:5263/Book/UpdateBook?id=${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookRequest)
-    })
+        body: formData,
+    });
 }
 
 export const deleteBook = async (id: string) => {

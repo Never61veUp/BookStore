@@ -29,8 +29,8 @@ export default function Home() {
 
     };
 
-    const handleUpdateBook = async (id: string, request: BookRequest) => {
-        await updateBook(id, request);
+    const handleUpdateBook = async (id: string, request: BookRequest, file: File | null) => {
+        await updateBook(id, request, file);
         closeModal();
 
         const books = await getAllBooks();
@@ -84,7 +84,7 @@ export default function Home() {
                 isModalOpen={isModalOpen}
                 handleClose={closeModal}
                 handleCreateBook={(request: BookRequest, file: File | null) => handleCreateBook(request, file)}
-                handleUpdateBook={handleUpdateBook}
+                handleUpdateBook={(id:string, request: BookRequest, file: File | null) => handleUpdateBook(values.id, request, file)}
             />
             
             {loading ? <h1>loading...</h1> : <Books books={books} withEditAndDelete={true} handleOpen={openEditModal} handleDelete={handleDeleteBook}></Books>}

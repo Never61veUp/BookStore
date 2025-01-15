@@ -28,9 +28,10 @@ interface Props {
     items: items[];
     selectedItem?: items;
     onSelect: (selectedItem: items) => void;
+    itemsName: string;
 }
 
-export function Combobox({ items, selectedItem, onSelect }: Props) {
+export function Combobox({ items, selectedItem, onSelect, itemsName }: Props) {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState("")
 
@@ -49,13 +50,13 @@ export function Combobox({ items, selectedItem, onSelect }: Props) {
                 >
                     {value
                         ? items.find((items) => items.value === value)?.label
-                        : "Select framework..."}
+                        : 'Select' + itemsName + '...' }
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search framework..." className="h-9" />
+                    <CommandInput placeholder={'Search' + itemsName + '...' } className="h-9" />
                     <CommandList>
                         <CommandEmpty>No framework found.</CommandEmpty>
                         <CommandGroup>
