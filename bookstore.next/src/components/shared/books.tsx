@@ -15,7 +15,7 @@ interface Props {
 
 export const Books = ({books, withEditAndDelete, handleDelete, handleOpen}:Props) => {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {books && books.map((book:Book) => (
                 <Card key={book.id} className="max-w-xs bg-white shadow-lg">
                     <CardHeader className="p-0">
@@ -40,16 +40,16 @@ export const Books = ({books, withEditAndDelete, handleDelete, handleOpen}:Props
                         </Link>
 
                         {withEditAndDelete && (
-                            <div className="flex w-full justify-between space-x-4">
+                            <div className="flex w-full justify-center space-x-4">
                                 <Button
                                     onClick={handleDelete != undefined ? () => handleDelete(book.id) : undefined}
-                                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-md transition-colors"
+                                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-md transition-colors"
                                 >
                                     Удалить
                                 </Button>
                                 <Button
                                     onClick={handleOpen != undefined ? () => handleOpen(book) : undefined}
-                                    className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 rounded-md transition-colors"
+                                    className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 rounded-md transition-colors"
                                 >
                                     Редактировать
                                 </Button>

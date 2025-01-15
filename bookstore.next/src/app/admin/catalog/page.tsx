@@ -75,8 +75,8 @@ export default function Home() {
     }, []);
 
     return (
-        <div>
-            <Button onClick={openModal}>Добавить книгу</Button>
+        <div className="p-4">
+            <Button className="" onClick={openModal}>Добавить книгу</Button>
 
             <CreateUpdateBook
                 mode={mode}

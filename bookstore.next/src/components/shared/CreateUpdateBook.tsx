@@ -22,7 +22,7 @@ interface Props {
     isModalOpen: boolean;
     handleClose: () => void;
     handleCreateBook: (request: BookRequest, file: File | null) => void;
-    handleUpdateBook: (id: string, request: BookRequest) => void;
+    handleUpdateBook: (id: string, request: BookRequest, file: File | null) => void;
 }
 
 export enum Mode {
@@ -79,7 +79,7 @@ export const CreateUpdateBook = ({
         };
         mode === Mode.Create
             ? handleCreateBook(bookRequest, file)
-            : handleUpdateBook(values.id, bookRequest);
+            : handleUpdateBook(values.id, bookRequest, file);
     };
 
     useEffect(() => {
@@ -120,11 +120,11 @@ export const CreateUpdateBook = ({
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="author" className="text-right">Автор</Label>
-                        <Combobox onSelect={(item) => setAuthorId(item.value)} items={authors} selectedItem={authors.find((author) => author.value === authorId)} />
+                        <Combobox itemsName="Author" onSelect={(item) => setAuthorId(item.value)} items={authors} selectedItem={authors.find((author) => author.value === authorId)} />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="category" className="text-right">Категория</Label>
-                        <Combobox onSelect={(item) => setCategoryId(item.value)} items={categories} selectedItem={categories.find((category) => category.value === categoryId)} />
+                        <Combobox itemsName="Category" onSelect={(item) => setCategoryId(item.value)} items={categories} selectedItem={categories.find((category) => category.value === categoryId)} />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="stock" className="text-right">Количество</Label>
