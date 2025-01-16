@@ -24,7 +24,6 @@ public static class ApiExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(jwtSettings!.SecretKey))
                 };
-
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>

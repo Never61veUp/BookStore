@@ -1,10 +1,11 @@
 ﻿using BookStore.Application.Services;
+using BookStore.Host.Contracts;
 using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers;
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/api/user")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -13,7 +14,8 @@ public class UserController : ControllerBase
     {
         _userService = userService;
     }
-    [HttpPost("api/user/register")]
+    
+    [HttpPost("register")]
     public async Task<IActionResult> SignUp(SignUpUserRequest signUpUserRequest)
     {
         var signUpResult = await _userService.SignUpAsync(
@@ -26,12 +28,15 @@ public class UserController : ControllerBase
         if(signUpResult.IsFailure)
             return BadRequest(signUpResult.Error);
         
-        return Ok();
+        return Ok(signUpResult);
     }
-    [HttpPost("api/user/sign-up")]
+    
+    [HttpPost("sign-up")]
     public async Task<IActionResult> SignIn(LoginUserRequest loginUserRequest)
     {
-        var token = await _userService.SignInAsync(loginUserRequest.Email, loginUserRequest.Password);
+        var token = await _userService.SignInAsync(
+            loginUserRequest.Email, loginUserRequest.Password);
+        
         if(token.IsFailure)
             return BadRequest(token.Error);
         
@@ -40,5 +45,3 @@ public class UserController : ControllerBase
         return Ok(token.Value);
     }
 }
-public record SignUpUserRequest(string FirstName, string LastName, string Email, string Password, string MiddleName = "");
-public record LoginUserRequest(string Email, string Password);

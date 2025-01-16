@@ -10,41 +10,37 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-// Add services to the container.
+services.AddControllers();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+services.AddOpenApi();
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddOpenApi();
+services.AddScoped<IAuthorRepository, AuthorRepository>();
+services.AddScoped<IAuthorService, AuthorService>();
+services.AddScoped<IBookRepository, BookRepository>();
+services.AddScoped<IBookService, BookService>();
+services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+services.AddScoped<ICategoriesService, CategoriesService>();
 
-builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-builder.Services.AddScoped<IAuthorService, AuthorService>();
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IBookService, BookService>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
-builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+services.AddScoped<IYandexStorageService, YandexStorageService>();
+services.AddScoped<IImageService, ImageService>();
 
-builder.Services.AddScoped<IYandexStorageService, YandexStorageService>();
-builder.Services.AddScoped<IImageService, ImageService>();
-
-builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-
-var opt = configuration.GetSection(nameof(JwtOptions));
+services.AddScoped<IJwtProvider, JwtProvider>();
+services.AddScoped<IPasswordHasher, PasswordHasher>();
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+
 services.AddApiAuthentication(configuration);
 
-
-builder.Services.AddAutoMapper(typeof(AuthorProfile));
-builder.Services.AddAutoMapper(typeof(BookProfile));
-builder.Services.AddAutoMapper(typeof(CategoryProfile));
+services.AddAutoMapper(typeof(AuthorProfile));
+services.AddAutoMapper(typeof(BookProfile));
+services.AddAutoMapper(typeof(CategoryProfile));
 
 builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb");
 
-builder.Services.AddCors(options =>
+services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
@@ -55,7 +51,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -63,7 +58,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors("AllowReactApp");
-
 
 app.UseHttpsRedirection();
 

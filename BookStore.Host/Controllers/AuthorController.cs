@@ -1,6 +1,7 @@
 ﻿using BookStore.Application.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Core.Model.ValueObjects;
+using BookStore.Host.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,25 +17,32 @@ public class AuthorController : ControllerBase
     {
         _authorService = authorService;
     }
+    
     [Authorize]
-[HttpGet("GetAuthors")]
+    [HttpGet("GetAuthors")]
     public async Task<IActionResult> GetAuthors()
     {
         var result = await _authorService.GetAllAuthorsAsync();
         return Ok(result);
     }
-[HttpPost("AddAuthor")]
-[Authorize]
+    
+    [HttpPost("AddAuthor")]
+    [Authorize]
     public async Task<IActionResult> AddAuthor(AuthorRequest request)
     {
         var fullName = FullName.Create(request.FirstName, request.LastName, request.MiddleName);
         if(fullName.IsFailure)
             return BadRequest(fullName.Error);
+        
         var author = Author.Create(Guid.NewGuid(), fullName.Value, request.DateOfBirth, request.Biography);
         if(author.IsFailure)
             return BadRequest(author.Error);
-        await _authorService.AddAuthorAsync(author.Value);
+        
+        var addAuthorTask = await _authorService.AddAuthorAsync(author.Value);
+        
+        if(!addAuthorTask)
+            return BadRequest("Something went wrong");
+        
         return Ok();
     }
 }
-public record AuthorRequest(string FirstName, string LastName, DateTime DateOfBirth, string Biography, string MiddleName = "");
