@@ -16,7 +16,7 @@ public class UserController : ControllerBase
     }
     
     [HttpPost("register")]
-    public async Task<IActionResult> SignUp(SignUpUserRequest signUpUserRequest)
+    public async Task<IActionResult> SignUp([FromBody]SignUpUserRequest signUpUserRequest)
     {
         var signUpResult = await _userService.SignUpAsync(
             signUpUserRequest.FirstName, 
@@ -31,7 +31,7 @@ public class UserController : ControllerBase
         return Ok(signUpResult);
     }
     
-    [HttpPost("sign-up")]
+    [HttpPost("signIn")]
     public async Task<IActionResult> SignIn(LoginUserRequest loginUserRequest)
     {
         var token = await _userService.SignInAsync(
