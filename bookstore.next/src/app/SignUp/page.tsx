@@ -1,9 +1,9 @@
-﻿import {AuthForm, Mode} from "@/components/shared/authForm";
+﻿import {AuthForm} from "@/components/shared/authForm";
 
 export default function Home() {
     return (
         <>
-            <AuthForm mode={Mode.SignUp}/>
+            <AuthForm mode={1}/>
         </>
     );
 }

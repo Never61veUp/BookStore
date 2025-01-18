@@ -34,10 +34,7 @@ export const createBook = async (bookRequest: BookRequest, file: File) => {
 };
 export const getBookById = async (bookId: string): Promise<Book> => {
     const response = await fetch(`http://localhost:5263/Book/GetBookById?bookId=${bookId}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        }
+        credentials: 'include',
     })
     if (!response.ok) {
         throw new Error("Failed to fetch book");
