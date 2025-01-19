@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using BookStore.Application.Services;
+using BookStore.Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +36,13 @@ public static class ApiExtensions
                 };
             });
         
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy =>
+            {
+                policy.RequireClaim("Admin", "true");
+                
+            });
+        });
     }
 }

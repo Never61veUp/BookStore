@@ -1,4 +1,5 @@
-﻿using BookStore.Core.Model.Catalog;
+﻿using BookStore.Application.Abstractions;
+using BookStore.Core.Model.Catalog;
 using BookStore.PostgreSql.Repositories;
 using CSharpFunctionalExtensions;
 
@@ -41,7 +42,10 @@ public class BookService : IBookService
     }
     public async Task<Book> GetBookByIdAsync(Guid id)
     {
-        return await _bookRepository.GetBookByIdAsync(id);
+        var book = await _bookRepository.GetBookByIdAsync(id);
+        var url = await _yandexStorageService.GetPreSignedUrlAsync(book.Image.Name, TimeSpan.FromMinutes(15));
+        book.Image.SetImageLink(url);
+        return book;
     }
     public async Task<Result> AddBookAsync(Book book)
     {

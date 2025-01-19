@@ -1,8 +1,10 @@
 ﻿using System.Net.Mime;
+using BookStore.Application.Abstractions;
 using BookStore.Application.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Core.Model.ValueObjects;
 using BookStore.Host.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers;
@@ -24,7 +26,7 @@ public class BookController : ControllerBase
     {
         return Ok(await _bookService.GetAllBooksAsync());
     }
-    
+    [Authorize(Policy = "Admin")]
     [HttpGet("GetBookById")]
     public async Task<IActionResult> GetBookByIdAsync(Guid bookId)
     {

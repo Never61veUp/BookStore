@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BookStore.Auth\BookStore.Auth.csproj" />
       <ProjectReference Include="..\BookStore.PostgreSql\BookStore.PostgreSql.csproj" />
     </ItemGroup>
 
