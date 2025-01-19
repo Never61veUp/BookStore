@@ -37,6 +37,8 @@ public class UserRepository : IUserRepository
     public async Task<Result<User>> GetUserByEmail(string email)
     {
         var userEntity = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (userEntity == null)
+            return Result.Failure<User>("User not found");
         var user = User.Create(
             userEntity.Id,
             userEntity.Name,

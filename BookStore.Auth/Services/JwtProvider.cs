@@ -1,16 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BookStore.Auth.Abstractions;
 using BookStore.Core.Model.Users;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BookStore.Application.Services;
-
-public interface IJwtProvider
-{
-    string GenerateToken(User user);
-}
+namespace BookStore.Auth.Services;
 
 public class JwtProvider : IJwtProvider
 {
@@ -22,7 +18,10 @@ public class JwtProvider : IJwtProvider
     }
     public string GenerateToken(User user)
     {
-        Claim[] claims = [new("userId", user.Id.ToString())];
+        Claim[] claims = [
+            new("userId", user.Id.ToString()),
+            new("Admin", "true"),
+        ];
         
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
@@ -36,10 +35,4 @@ public class JwtProvider : IJwtProvider
         
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-}
-
-public class JwtOptions
-{
-    public string SecretKey { get; set; } = string.Empty;
-    public int ExpiresHours { get; set; }
 }

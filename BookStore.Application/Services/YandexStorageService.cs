@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
+using BookStore.Application.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 
@@ -83,11 +84,4 @@ public class YandexStorageService : IYandexStorageService
 
         return await _client.GetPreSignedURLAsync(request);
     }
-}
-public interface IYandexStorageService
-{
-    Task UploadFileAsync(IFormFile file);
-    Task<byte[]> DownloadFileAsync(string fileName);
-    Task<IEnumerable<string>> ListFilesAsync();
-    Task<string> GetPreSignedUrlAsync(string fileName, TimeSpan expiration);
 }

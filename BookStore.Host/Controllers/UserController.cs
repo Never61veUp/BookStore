@@ -1,4 +1,5 @@
-﻿using BookStore.Application.Services;
+﻿using BookStore.Application.Abstractions;
+using BookStore.Application.Services;
 using BookStore.Host.Contracts;
 using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
@@ -44,4 +45,14 @@ public class UserController : ControllerBase
         
         return Ok(token.Value);
     }
+    [HttpPost("signOut")]
+    public new IActionResult SignOut()
+    {
+        HttpContext.Response.Cookies.Delete("tasty-cookies");
+        if(!HttpContext.Request.Cookies.ContainsKey("tasty-cookies"))
+            return Unauthorized("You are not logged in");
+        return Ok(new { success = true, message = "Вы успешно вышли из системы" });
+    }
+    [HttpGet("isLoggedIn")]
+    public IActionResult IsLoggedIn() => Ok(HttpContext.Request.Cookies.ContainsKey("tasty-cookies"));
 }

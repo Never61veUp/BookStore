@@ -1,4 +1,7 @@
+using BookStore.Application.Abstractions;
 using BookStore.Application.Services;
+using BookStore.Auth.Abstractions;
+using BookStore.Auth.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Host.Extensions;
 using BookStore.PostgreSql;
@@ -46,6 +49,7 @@ services.AddCors(options =>
         policy => policy
             .WithOrigins("http://localhost:3000")
             .AllowAnyHeader()
+            .AllowCredentials()
             .AllowAnyMethod());
 });
 

@@ -1,7 +1,7 @@
 ﻿using BookStore.Core.Model.Catalog;
 using CSharpFunctionalExtensions;
 
-namespace BookStore.Application.Services;
+namespace BookStore.Application.Abstractions;
 
 public interface IBookService
 {

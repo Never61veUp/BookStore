@@ -1,4 +1,5 @@
-﻿using BookStore.Core.Model.Catalog;
+﻿using BookStore.Application.Abstractions;
+using BookStore.Core.Model.Catalog;
 using BookStore.PostgreSql.Repositories;
 
 namespace BookStore.Application.Services;
@@ -36,13 +37,4 @@ public class CategoriesService : ICategoriesService
     {
         return await _categoriesRepository.DeleteCategoryAsync(id);
     }
-}
-
-public interface ICategoriesService
-{
-    Task<List<Category>> GetCategories();
-    Task<Category> GetCategoryById(Guid id);
-    Task<bool> CreateCategory(Category category);
-    Task<bool> UpdateCategory(Category category);
-    Task<bool> DeleteCategory(Guid id);
 }

@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Transfer;
+using BookStore.Application.Abstractions;
 using BookStore.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 

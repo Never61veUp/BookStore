@@ -1,4 +1,4 @@
-﻿using BookStore.Core.Model.Catalog;
+﻿using BookStore.Application.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace BookStore.Application.Services;
@@ -25,9 +25,4 @@ public class ImageService : IImageService
         await _yandexStorageService.UploadFileAsync(image);
     }
     
-}
-
-public interface IImageService
-{
-    Task UploadImageAsync(IFormFile image, string imageName = "");
 }

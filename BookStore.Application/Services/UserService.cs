@@ -1,15 +1,12 @@
-﻿using BookStore.Core.Model.Users;
+﻿using BookStore.Application.Abstractions;
+using BookStore.Auth.Abstractions;
+using BookStore.Auth.Services;
+using BookStore.Core.Model.Users;
 using BookStore.Core.Model.ValueObjects;
 using BookStore.PostgreSql.Repositories;
 using CSharpFunctionalExtensions;
 
 namespace BookStore.Application.Services;
-
-public interface IUserService
-{
-    Task<Result> SignUpAsync(string firstName, string lastName, string email, string password, string? middleName = "");
-    Task<Result<string>> SignInAsync(string email, string password);
-}
 
 public class UserService : IUserService
 {

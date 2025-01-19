@@ -1,4 +1,5 @@
-﻿using BookStore.Application.Services;
+﻿using BookStore.Application.Abstractions;
+using BookStore.Application.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Host.Contracts;
 using Microsoft.AspNetCore.Mvc;
