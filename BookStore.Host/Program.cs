@@ -7,6 +7,7 @@ using BookStore.Host.Extensions;
 using BookStore.PostgreSql;
 using BookStore.PostgreSql.Mapper;
 using BookStore.PostgreSql.Repositories;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,10 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddOpenApi();
+
+
+// var authConfig = configuration.GetSection(nameof(AuthorizationOptions));
+// services.Configure<AuthorizationOptions>(configuration.GetSection(nameof(AuthorizationOptions)));
 
 services.AddScoped<IAuthorRepository, AuthorRepository>();
 services.AddScoped<IAuthorService, AuthorService>();
@@ -35,13 +40,18 @@ services.AddScoped<IJwtProvider, JwtProvider>();
 services.AddScoped<IPasswordHasher, PasswordHasher>();
 services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
 
+
 services.AddApiAuthentication(configuration);
 
 services.AddAutoMapper(typeof(AuthorProfile));
 services.AddAutoMapper(typeof(BookProfile));
 services.AddAutoMapper(typeof(CategoryProfile));
 
-builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb");
+builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb", options =>
+{
+    options.DisableHealthChecks = true;
+    options.DisableTracing = true;
+});
 
 services.AddCors(options =>
 {

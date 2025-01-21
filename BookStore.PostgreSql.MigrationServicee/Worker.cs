@@ -1,9 +1,12 @@
 using System.Diagnostics;
+using BookStore.Core.Enums;
+using BookStore.PostgreSql.Model;
 using Microsoft.EntityFrameworkCore.Storage;
 using OpenTelemetry.Trace;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 
 namespace BookStore.PostgreSql.MigrationService;
 
@@ -12,12 +15,24 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IServiceProvider _serviceProvider;
+    private AuthorizationOptions _authOptions;
 
-    public Worker(ILogger<Worker> logger, IHostApplicationLifetime hostApplicationLifetime, IServiceProvider serviceProvider)
+    public Worker(ILogger<Worker> logger, IHostApplicationLifetime hostApplicationLifetime, IServiceProvider serviceProvider,
+        IOptions<AuthorizationOptions> authOptions)
     {
         _logger = logger;
         _hostApplicationLifetime = hostApplicationLifetime;
         _serviceProvider = serviceProvider;
+        if (authOptions.Value.RolePermissions.Count() == 0)
+        {
+            _logger.LogError("RolePermissions collection is empty!");
+        }
+        else
+        {
+            _logger.LogInformation("RolePermissions loaded successfully.");
+        }
+
+        _authOptions = authOptions.Value;
     }
 
     public const string ActivitySourceName = "Migrations";
@@ -68,7 +83,35 @@ public class Worker : BackgroundService
         });
     }
 
-    private static async Task SeedDataAsync(BookStoreDbContext dbContext, CancellationToken cancellationToken)
+    private async Task SeedDataAsync(BookStoreDbContext dbContext, CancellationToken cancellationToken)
     {
+        var roles = Enum
+            .GetValues<Role>()
+            .Select(r => new RoleEntity((int)r)
+            {
+                Name = r.ToString()
+            });
+        await dbContext.Roles.AddRangeAsync(roles, cancellationToken);
+        var permissions = Enum
+            .GetValues<Permission>()
+            .Select(p => new PermissionEntity((int)p)
+            {
+                Name = p.ToString()
+            });
+        await dbContext.Permissions.AddRangeAsync(permissions, cancellationToken);
+        var parseRolePermissions = ParseRolePermissions();
+        await dbContext.RolePermissions.AddRangeAsync(parseRolePermissions, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+    private RolePermissionEntity[] ParseRolePermissions()
+    {
+        return _authOptions.RolePermissions
+            .SelectMany(rp => rp.Permissions
+                .Select(p => new RolePermissionEntity
+                {
+                    RoleId = (int)Enum.Parse<Role>(rp.Role),
+                    PermissionId = (int)Enum.Parse<Permission>(p)
+                }))
+            .ToArray();
     }
 }

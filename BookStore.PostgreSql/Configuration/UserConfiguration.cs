@@ -20,5 +20,14 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             b.Property(x => x.LastName).HasColumnName("LastName");
             b.Property(x => x.MiddleName).HasColumnName("MiddleName");
         });
+
+        builder.HasMany(x => x.Roles)
+            .WithMany(u => u.Users)
+            .UsingEntity<UserRoleEntity>(
+                r => r.HasOne<RoleEntity>()
+                    .WithMany().HasForeignKey(role => role.RoleId),
+                u => u.HasOne<UserEntity>()
+                    .WithMany().HasForeignKey(user => user.UserId)
+            );
     }
 }
