@@ -1,7 +1,9 @@
 ﻿using System.Text;
 using BookStore.Application.Services;
 using BookStore.Auth.Services;
+using BookStore.Core.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -35,6 +37,8 @@ public static class ApiExtensions
                     }
                 };
             });
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         
         services.AddAuthorization(options =>
         {
@@ -43,6 +47,21 @@ public static class ApiExtensions
                 policy.RequireClaim("Admin", "true");
                 
             });
+        });
+    }
+
+    public static void AddDynamicPermissionPolicies(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            foreach (Permission permission in Enum.GetValues(typeof(Permission)))
+            {
+                var policyName = $"Permission_{permission}";
+                options.AddPolicy(policyName, policy =>
+                {
+                    policy.AddRequirements(new PermissionRequirement([permission]));
+                });
+            }
         });
     }
 }

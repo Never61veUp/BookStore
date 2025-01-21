@@ -1,6 +1,7 @@
 ﻿using BookStore.Application.Abstractions;
 using BookStore.Auth.Abstractions;
 using BookStore.Auth.Services;
+using BookStore.Core.Enums;
 using BookStore.Core.Model.Users;
 using BookStore.Core.Model.ValueObjects;
 using BookStore.PostgreSql.Repositories;
@@ -50,5 +51,10 @@ public class UserService : IUserService
         var token = _jwtProvider.GenerateToken(user.Value);
         return Result.Success(token);
         
+    }
+
+    public async Task<Result<HashSet<Permission>>> GetPermissionsAsync(Guid userId)
+    {
+        return await _userRepository.GetUserPermissions(userId);
     }
 }

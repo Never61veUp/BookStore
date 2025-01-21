@@ -85,22 +85,31 @@ public class Worker : BackgroundService
 
     private async Task SeedDataAsync(BookStoreDbContext dbContext, CancellationToken cancellationToken)
     {
-        var roles = Enum
-            .GetValues<Role>()
-            .Select(r => new RoleEntity((int)r)
-            {
-                Name = r.ToString()
-            });
-        await dbContext.Roles.AddRangeAsync(roles, cancellationToken);
-        var permissions = Enum
-            .GetValues<Permission>()
-            .Select(p => new PermissionEntity((int)p)
-            {
-                Name = p.ToString()
-            });
-        await dbContext.Permissions.AddRangeAsync(permissions, cancellationToken);
-        var parseRolePermissions = ParseRolePermissions();
-        await dbContext.RolePermissions.AddRangeAsync(parseRolePermissions, cancellationToken);
+        if (!await dbContext.Roles.AnyAsync(cancellationToken))
+        {
+            var roles = Enum
+                .GetValues<Role>()
+                .Select(r => new RoleEntity((int)r)
+                {
+                    Name = r.ToString()
+                });
+            await dbContext.Roles.AddRangeAsync(roles, cancellationToken);
+        }
+        if (!await dbContext.Permissions.AnyAsync(cancellationToken))
+        {
+            var permissions = Enum
+                .GetValues<Permission>()
+                .Select(p => new PermissionEntity((int)p)
+                {
+                    Name = p.ToString()
+                });
+            await dbContext.Permissions.AddRangeAsync(permissions, cancellationToken);
+        }
+        if (!await dbContext.RolePermissions.AnyAsync(cancellationToken))
+        {
+            var parseRolePermissions = ParseRolePermissions();
+            await dbContext.RolePermissions.AddRangeAsync(parseRolePermissions, cancellationToken);
+        }
         await dbContext.SaveChangesAsync(cancellationToken);
     }
     private RolePermissionEntity[] ParseRolePermissions()

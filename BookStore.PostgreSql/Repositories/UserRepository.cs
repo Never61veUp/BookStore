@@ -1,4 +1,5 @@
-﻿using BookStore.Core.Model.Users;
+﻿using BookStore.Core.Enums;
+using BookStore.Core.Model.Users;
 using BookStore.PostgreSql.Model;
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ public interface IUserRepository
 {
     Task<Result> AddUserAsync(User user);
     Task<Result<User>> GetUserByEmail(string email);
+    Task<Result<HashSet<Permission>>> GetUserPermissions(Guid userId);
 }
 
 public class UserRepository : IUserRepository
@@ -48,5 +50,25 @@ public class UserRepository : IUserRepository
         if(user.IsFailure)
             return Result.Failure<User>(user.Error);
         return Result.Success<User>(user.Value);
+    }
+
+    public async Task<Result<HashSet<Permission>>> GetUserPermissions(Guid userId)
+    {
+        var roles = await _dbContext.Users
+            .AsNoTracking()
+            .Include(u => u.Roles)
+            .ThenInclude(r => r.GlobalPermissions)
+            .Where(u => u.Id == userId)
+            .Select(u => u.Roles)
+            .ToArrayAsync();
+        
+        if(roles.Length == 0)
+            return Result.Failure<HashSet<Permission>>($"User {userId} not found");
+        
+        return roles
+            .SelectMany(r => r)
+            .SelectMany(r => r.GlobalPermissions)
+            .Select(p => (Permission)p.Id)
+            .ToHashSet();
     }
 }

@@ -46,6 +46,7 @@ services.AddApiAuthentication(configuration);
 services.AddAutoMapper(typeof(AuthorProfile));
 services.AddAutoMapper(typeof(BookProfile));
 services.AddAutoMapper(typeof(CategoryProfile));
+services.AddDynamicPermissionPolicies();
 
 builder.AddNpgsqlDbContext<BookStoreDbContext>("BookStoreDb", options =>
 {
@@ -77,6 +78,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
