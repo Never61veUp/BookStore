@@ -7,6 +7,8 @@ import {useEffect, useState} from "react";
 import Image from "next/image";
 import {useParams} from "next/navigation";
 import {getBookById} from "@/app/services/book";
+import {addToCart} from "@/app/services/cart";
+import {notifyError, notifySuccess} from "@/app/layout";
 
 const BookViewPage = () => {
     const { id } = useParams();
@@ -31,8 +33,17 @@ const BookViewPage = () => {
     });
     const [quantity, setQuantity] = useState<number>(1);
 
-    const handleAddToCart = () => {
-        console.log(`Добавлено ${quantity} шт. книги: ${book && book.title}`);
+    const handleAddToCart = async () => {
+        if(id != null){
+            try {
+                await addToCart(id.toString());
+            }catch(err) {
+                if (err instanceof Error) {
+                    notifyError(err.message);
+                }
+            }
+        }
+
     };
 
     const handleBuyNow = () => {

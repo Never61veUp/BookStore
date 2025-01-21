@@ -8,7 +8,9 @@
 }
 
 export const getAllBooks = async (): Promise<Book[]> => {
-    const response = await fetch("http://localhost:5263/Book/GetBooks");
+    const response = await fetch("http://localhost:5263/Book/GetBooks", {
+        credentials: 'include',
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch books");
@@ -30,6 +32,7 @@ export const createBook = async (bookRequest: BookRequest, file: File) => {
     await fetch("http://localhost:5263/Book/AddBook", {
         method: "POST",
         body: formData,
+        credentials: 'include',
     });
 };
 export const getBookById = async (bookId: string): Promise<Book> => {
@@ -55,11 +58,13 @@ export const updateBook = async (id: string, bookRequest: BookRequest, file:File
     await fetch(`http://localhost:5263/Book/UpdateBook?id=${id}`, {
         method: "PUT",
         body: formData,
+        credentials: 'include',
     });
 }
 
 export const deleteBook = async (id: string) => {
     await fetch(`http://localhost:5263/Book/DeleteBook?id=${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: 'include',
     })
 }

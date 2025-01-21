@@ -13,8 +13,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    const [roles, setRoles] = useState<string[]>([]);
+
     useEffect(() => {
-        setLoggedIn(!!Cookies.get('tasty-cookies'));
+        const token = Cookies.get("tasty-cookies");
+        if (token) {
+            setLoggedIn(true);
+            const decodedToken = JSON.parse(atob(token.split(".")[1]));
+            setRoles(decodedToken.roles || []);
+        }
     }, []);
 
     const login = async (email: string, password: string) => {

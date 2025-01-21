@@ -4,7 +4,8 @@ import {Books} from "@/components/shared/books";
 import {BookRequest, createBook, deleteBook, getAllBooks, updateBook} from "@/app/services/book";
 import {Button} from "@/components/ui/button";
 import {CreateUpdateBook, Mode} from "@/components/shared/CreateUpdateBook";
-
+import {useAuth} from "@/app/auth-context";
+import { useRouter } from 'next/navigation';
 export default function Home() {
     const defaultValues = {
         title: "",
@@ -17,6 +18,8 @@ export default function Home() {
     const [loading, setLoading] = useState<boolean>(true)
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [mode, setMode] = useState<Mode>(Mode.Create);
+    const { loggedIn } = useAuth();
+    const router = useRouter();
 
     const handleCreateBook = async (request: BookRequest, file: File | null) => {
         if(file){
