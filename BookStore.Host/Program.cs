@@ -29,6 +29,8 @@ services.AddScoped<IBookRepository, BookRepository>();
 services.AddScoped<IBookService, BookService>();
 services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 services.AddScoped<ICategoriesService, CategoriesService>();
+services.AddScoped<ICartService, CartService>();
+services.AddScoped<ICartRepository, CartRepository>();
 
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IUserService, UserService>();

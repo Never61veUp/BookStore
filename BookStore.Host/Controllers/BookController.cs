@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Host.Controllers;
 [ApiController]
 [Route("[controller]")]
-[Authorize(Policy = "Permission_Read")]
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
@@ -29,7 +28,6 @@ public class BookController : ControllerBase
     {
         return Ok(await _bookService.GetAllBooksAsync());
     }
-    [Authorize(Policy = "Permission_Read")]
     [HttpGet("GetBookById")]
     public async Task<IActionResult> GetBookByIdAsync(Guid bookId)
     {

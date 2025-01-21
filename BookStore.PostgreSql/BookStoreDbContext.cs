@@ -19,6 +19,7 @@ public class BookStoreDbContext(
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
+    public DbSet<CartEntity> Carts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +30,7 @@ public class BookStoreDbContext(
         modelBuilder.ApplyConfiguration(new RolePermissionConfiguration(authOptions.Value));
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+        modelBuilder.ApplyConfiguration(new CartConfiguration());
         
         base.OnModelCreating(modelBuilder);
     }

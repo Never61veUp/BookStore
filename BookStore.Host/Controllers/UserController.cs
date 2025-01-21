@@ -55,4 +55,8 @@ public class UserController : ControllerBase
     }
     [HttpGet("isLoggedIn")]
     public IActionResult IsLoggedIn() => Ok(HttpContext.Request.Cookies.ContainsKey("tasty-cookies"));
+
+    [HttpGet("isLoggedOut")]
+    public IActionResult IsHavePermission() =>
+        Ok(Request.Headers.Referer.ToString());
 }
