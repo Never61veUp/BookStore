@@ -31,6 +31,20 @@ public class CartController : ControllerBase
             return BadRequest(cart.Error);
         return Ok(cart.Value.Books);
     }
+    [HttpGet("getTotalPrice")]
+    public async Task<IActionResult> GetTotalPrice()
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId is null || !Guid.TryParse(userId, out var id))
+        {
+            return Unauthorized();
+        }
+        
+        var cart = await _cartService.GetCartAsync(id);
+        if(cart.IsFailure)
+            return BadRequest(cart.Error);
+        return Ok(cart.Value.GetTotalPrice().Value);
+    }
     [HttpPost("addToCard")]
     public async Task<IActionResult> AddBookToCart(Guid bookId)
     {

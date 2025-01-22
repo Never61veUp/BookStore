@@ -22,6 +22,7 @@ public class BookKeyConverter : JsonConverter<Dictionary<Book, int>>
             writer.WriteString("Title", kvp.Key.Title);
             writer.WriteString("AuthorFullName", kvp.Key.AuthorFullName.ToString());
             writer.WriteNumber("Count", kvp.Value);
+            writer.WriteNumber("Price", kvp.Key.Price.Value);
             writer.WriteEndObject();
             // writer.WritePropertyName(kvp.Key.Id.ToString());
             // writer.WritePropertyName(kvp.Key.Title);

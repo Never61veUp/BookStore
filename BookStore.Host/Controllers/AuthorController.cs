@@ -18,7 +18,6 @@ public class AuthorController : ControllerBase
         _authorService = authorService;
     }
     
-    [Authorize]
     [HttpGet("GetAuthors")]
     public async Task<IActionResult> GetAuthors()
     {
@@ -27,7 +26,6 @@ public class AuthorController : ControllerBase
     }
     
     [HttpPost("AddAuthor")]
-    [Authorize]
     public async Task<IActionResult> AddAuthor(AuthorRequest request)
     {
         var fullName = FullName.Create(request.FirstName, request.LastName, request.MiddleName);
