@@ -4,6 +4,7 @@ using BookStore.Auth.Abstractions;
 using BookStore.Auth.Services;
 using BookStore.Core.Model.Catalog;
 using BookStore.Host.Extensions;
+using BookStore.Host.Services;
 using BookStore.PostgreSql;
 using BookStore.PostgreSql.Mapper;
 using BookStore.PostgreSql.Repositories;
@@ -14,7 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-services.AddControllers();
+services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.WriteIndented = true;
+    options.JsonSerializerOptions.Converters.Add(new BookKeyConverter());
+});
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddOpenApi();

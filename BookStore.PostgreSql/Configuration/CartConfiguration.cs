@@ -8,7 +8,7 @@ public class CartConfiguration : IEntityTypeConfiguration<CartEntity>
 {
     public void Configure(EntityTypeBuilder<CartEntity> builder)
     {
-        builder.HasKey(x => new { x.UserId, x.BookId });
+        builder.HasKey(x => x.Id);
         builder.Property(x => x.UserId).IsRequired();
         builder.Property(x => x.BookId).IsRequired();
         builder.ToTable("Cart");

@@ -29,7 +29,7 @@ public class CartController : ControllerBase
         var cart = await _cartService.GetCartAsync(id);
         if(cart.IsFailure)
             return BadRequest(cart.Error);
-        return Ok(cart.Value);
+        return Ok(cart.Value.Books);
     }
     [HttpPost("addToCard")]
     public async Task<IActionResult> AddBookToCart(Guid bookId)

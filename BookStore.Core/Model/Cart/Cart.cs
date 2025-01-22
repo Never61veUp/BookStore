@@ -6,14 +6,14 @@ namespace BookStore.Core.Model.Cart;
 
 public class Cart : IAggregateRoot
 {
-    private Cart(Guid userId, List<Book> books)
+    private Cart(Guid userId, Dictionary<Book, int> books)
     {
         UserId = userId;
         Books = books;
     }
     
     public Guid UserId { get; private set; }
-    public List<Book> Books { get; private set; }
+    public Dictionary<Book, int> Books { get; private set; }
 
     public Result<Price> GetTotalPrice()
     {
@@ -25,11 +25,11 @@ public class Cart : IAggregateRoot
         decimal price = 0;
         foreach (var book in Books)
         {
-            if (book.Price.Value < 0)
+            if (book.Key.Price.Value < 0)
             {
-                return Result.Failure<Price>($"Invalid price for the book: {book.Title}");
+                return Result.Failure<Price>($"Invalid price for the book: {book.Key.Title}");
             }
-            price += book.Price.Value;
+            price += book.Key.Price.Value * book.Value;
         }
         
         var totalPrice = Price.Create(price);
@@ -39,7 +39,7 @@ public class Cart : IAggregateRoot
         
         return Result.Success(totalPrice.Value);
     }
-    public static Result<Cart> Create(Guid userId, List<Book> books)
+    public static Result<Cart> Create(Guid userId, Dictionary<Book, int> books)
     {
         if (userId == Guid.Empty)
             return Result.Failure<Cart>("User ID cannot be empty.");
@@ -54,6 +54,7 @@ public class Cart : IAggregateRoot
         if (book.Price.Value < 0)
             return Result.Failure($"Invalid price for the book: {book.Title}");
         
+        Books.Add(book, 1);
         return Result.Success();
     }
 }
