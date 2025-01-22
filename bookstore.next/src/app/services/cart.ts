@@ -1,12 +1,12 @@
-﻿export interface Book {
-    title: string;
-    authorFullName: string;
-    count: number;
+﻿ interface Book {
+     Title: string;
+     AuthorFullName: string;
+     Count: number;
+     Price: number;
 }
 
-export interface CartResponse {
-    bookId: string;
-    books: Book;
+ interface CartResponse {
+     [id: string]: Book;
 }
 export const addToCart = async (bookId: string) => {
 
@@ -27,10 +27,16 @@ export const getCart = async (): Promise<CartResponse[]> => {
         const error = await response.text();
         throw new Error(error || "Failed to get cart");
     }
-    const cartData = await response.json();
-    return Object.entries(cartData).map(([bookId, books]) => ({
-        bookId,
-        books,
-    })) as CartResponse[];
+    return await response.json();
 
+}
+export const getTotalPrice = async (): Promise<number> => {
+    const response = await fetch(`http://localhost:5263/Cart/getTotalPrice`, {
+        credentials: 'include',
+    })
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to get cart");
+    }
+    return await response.json();
 }

@@ -1,16 +1,19 @@
 ﻿"use client"
 import {useEffect, useState} from "react";
-import {CartResponse, getCart} from "@/app/services/cart";
+import {CartResponse, getCart, getTotalPrice} from "@/app/services/cart";
 import {notifyError, notifySuccess} from "@/app/layout";
 
 export default function Cart() {
     const [cartItems, setCartItems] = useState<CartResponse[]>([]);
+    const [totalPrice, setTotalPrice] = useState(0);
     const [loading, setLoading] = useState<boolean>(true)
     useEffect(() => {
         const get = async() => {
             try {
                 const cart = await getCart();
+                const totalPrice = await getTotalPrice();
                 setCartItems(cart)
+                setTotalPrice(totalPrice)
                 notifySuccess("Успешно")
             }catch (error){
                 if(error instanceof Error)
@@ -22,6 +25,12 @@ export default function Cart() {
         get();
     }, []);
     console.log(cartItems);
+    const cartItemsArray = Object.entries(cartItems).map(([id, book]) => ({
+        id,
+        ...book,
+    }));
+
+    console.log(cartItemsArray);
     return (
         <>
 
@@ -33,7 +42,7 @@ export default function Cart() {
                         </h1>
 
                         <ul className="divide-y divide-gray-200">
-                            {cartItems && cartItems.map((cartItem: CartResponse) => (
+                            {cartItemsArray && cartItemsArray.map((cartItem: CartResponse) => (
 
                                 <li
                                     key={cartItem.bookId}
@@ -41,20 +50,20 @@ export default function Cart() {
                                 >
                                     <div>
                                         <h2 className="text-lg font-medium text-gray-700">
-                                            {cartItem.books.title}
+                                            {cartItem.Title}
                                         </h2>
-                                        <p className="text-sm text-gray-500">{cartItem.books.authorFullName}</p>
+                                        <p className="text-sm text-gray-500">{cartItem.AuthorFullName}</p>
                                         <p className="text-sm font-medium text-gray-900">
-                                            Цена: {} ₽
+                                            Цена: {cartItem.Price} ₽
                                         </p>
                                     </div>
 
                                     <div className="text-center">
                                         <p className="text-sm text-gray-500">
-                                            Количество: {cartItem.books.count}
+                                            Количество: {cartItem.Count}
                                         </p>
                                         <p className="text-sm font-medium text-gray-900">
-                                            Всего: {} ₽
+                                            Всего: {cartItem.Price * cartItem.Count} ₽
                                         </p>
                                     </div>
                                 </li>
@@ -66,8 +75,9 @@ export default function Cart() {
             <span className="text-lg font-semibold text-gray-700">
               Общая стоимость:
             </span>
+
                                 <span className="text-lg font-bold text-green-600">
-               ₽
+               {totalPrice.value}₽
             </span>
                             </div>
                             <button
