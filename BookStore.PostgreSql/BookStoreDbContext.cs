@@ -20,6 +20,7 @@ public class BookStoreDbContext(
     public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<CartEntity> Carts { get; set; }
+    public DbSet<CartItemEntity> CartItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

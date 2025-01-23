@@ -1,10 +1,11 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.ComponentModel.DataAnnotations;
+using CSharpFunctionalExtensions;
 
 namespace BookStore.PostgreSql.Model;
 
 public class CartEntity() : Entity<Guid>
 {
-    public override Guid Id { get; protected set; } = Guid.NewGuid();
+    [Required]
     public Guid UserId { get; set; }
-    public Guid BookId { get; set; }
+    public ICollection<CartItemEntity> Items { get; set; } = new List<CartItemEntity>();
 }
