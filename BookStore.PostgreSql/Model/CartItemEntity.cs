@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 
 namespace BookStore.PostgreSql.Model;
 
-public class CartItemEntity : Entity<Guid>
+public class CartItemEntity(Guid id) : Entity<Guid>(id)
 {
     [Required]
     public Guid CartId { get; set; }

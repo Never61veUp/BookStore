@@ -32,6 +32,7 @@ public class BookStoreDbContext(
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         modelBuilder.ApplyConfiguration(new CartConfiguration());
+        modelBuilder.ApplyConfiguration(new CartItemConfiguration());
         
         base.OnModelCreating(modelBuilder);
     }
