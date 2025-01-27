@@ -1,6 +1,6 @@
 ﻿"use client"
 import {useEffect, useState} from "react";
-import {CartResponse, getCart, getTotalPrice} from "@/app/services/cart";
+import {CartResponse, decreaseByOne, getCart, getTotalPrice, increaseByOne} from "@/app/services/cart";
 import {notifyError, notifySuccess} from "@/app/layout";
 
 export default function Cart() {
@@ -24,6 +24,32 @@ export default function Cart() {
         }
         get();
     }, []);
+    const increaseCartItem = async (bookId: string) => {
+        try{
+            await increaseByOne(bookId);
+            const cart = await getCart();
+            const totalPrice = await getTotalPrice();
+            setCartItems(cart)
+            setTotalPrice(totalPrice)
+
+        }catch(error){
+            if(error instanceof Error)
+                notifyError(error.message);
+        }
+    }
+    const decreaseCardItem = async (bookId: string) => {
+        try{
+            await decreaseByOne(bookId);
+            const cart = await getCart();
+            const totalPrice = await getTotalPrice();
+            setCartItems(cart)
+            setTotalPrice(totalPrice)
+
+        }catch(error){
+            if(error instanceof Error)
+                notifyError(error.message);
+        }
+    }
     console.log(cartItems);
     const cartItemsArray = Object.entries(cartItems).map(([id, book]) => ({
         id,
@@ -45,7 +71,7 @@ export default function Cart() {
                             {cartItemsArray && cartItemsArray.map((cartItem: CartResponse) => (
 
                                 <li
-                                    key={cartItem.bookId}
+                                    key={cartItem.id}
                                     className="flex items-center justify-between py-4"
                                 >
                                     <div>
@@ -58,13 +84,30 @@ export default function Cart() {
                                         </p>
                                     </div>
 
-                                    <div className="text-center">
-                                        <p className="text-sm text-gray-500">
-                                            Количество: {cartItem.Count}
-                                        </p>
-                                        <p className="text-sm font-medium text-gray-900">
-                                            Всего: {cartItem.Price * cartItem.Count} ₽
-                                        </p>
+                                    <div className="text-center content-between">
+                                        <div>
+                                            <p className="text-sm text-gray-500">
+                                                Количество: {cartItem.Count}
+                                            </p>
+                                            <p className="text-sm font-medium text-gray-900">
+                                                Всего: {cartItem.Price * cartItem.Count} ₽
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <button
+                                                onClick={() => increaseCartItem(cartItem.id)}
+                                                className="px-3 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none"
+                                            >
+                                                +
+                                            </button>
+                                            <button
+                                                onClick={() => decreaseCardItem(cartItem.id)}
+                                                className="px-3 py-1 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none"
+                                            >
+                                                -
+                                            </button>
+                                        </div>
                                     </div>
                                 </li>
                             ))}

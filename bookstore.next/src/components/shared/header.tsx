@@ -1,23 +1,17 @@
 ﻿"use client"
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import {notifyError, notifySuccess} from "@/app/layout";
-import {signOut, isLoggedIn} from "@/app/services/user";
-import React, {useEffect, useState} from "react";
-import Cookies from 'js-cookie';
-import { useAuth } from '@/app/auth-context';
+import React from "react";
+import {ProfileDropDownMenu} from "@/components/shared/profileDropDownMenu";
 
 const Header = () => {
-    const { loggedIn, logout } = useAuth();
 
     return (
-        <header className="bg-blue-900 text-white p-4 shadow-lg">
+        <header className="bg-blue-900 p-4 shadow-lg">
             <div className="max-w-7xl mx-auto flex justify-between items-center">
-                {/* Логотип */}
                 <div className="text-3xl font-semibold">
                     <Link href="/">BookStore</Link>
                 </div>
-                
+
                 <nav>
                     <ul className="flex space-x-8">
                         <li>
@@ -40,17 +34,7 @@ const Header = () => {
                         placeholder="Поиск книг..."
                         className="p-2 rounded-md border-2 border-gray-400 focus:outline-none focus:border-yellow-400"
                     />
-                    {loggedIn ? (
-                        <Button onClick={logout} variant="outline" size="sm" className="hover:bg-yellow-600 transition-colors">
-                            Выйти
-                        </Button>
-                    ) : (
-                        <Link href={"/SignIn"} className="hover:bg-yellow-600 transition-colors">
-                            Войти
-                        </Link>
-                    )}
-
-
+                    <ProfileDropDownMenu/>
                 </div>
             </div>
         </header>

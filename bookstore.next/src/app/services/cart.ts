@@ -40,3 +40,23 @@ export const getTotalPrice = async (): Promise<number> => {
     }
     return await response.json();
 }
+ export const increaseByOne = async (bookId: string) => {
+     const response = await fetch(`http://localhost:5263/Cart/increaseQuantity?bookId=${bookId}`, {
+         method: "POST",
+         credentials: 'include',
+     })
+     if (!response.ok) {
+         const error = await response.text();
+         throw new Error(error || "Failed to increaseByOne");
+     }
+ }
+ export const decreaseByOne = async (bookId: string) => {
+     const response = await fetch(`http://localhost:5263/Cart/decreaseQuantityByOne?bookId=${bookId}`, {
+         method: "POST",
+         credentials: 'include',
+     })
+     if (!response.ok) {
+         const error = await response.text();
+         throw new Error(error || "Failed to decreaseByOne");
+     }
+ }
