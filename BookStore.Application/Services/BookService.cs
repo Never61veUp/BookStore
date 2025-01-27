@@ -40,12 +40,15 @@ public class BookService : IBookService
     {
         return await _bookRepository.GetBooksByCategoryAsync(categoryId);
     }
-    public async Task<Book> GetBookByIdAsync(Guid id)
+    public async Task<Result<Book>> GetBookByIdAsync(Guid id)
     {
         var book = await _bookRepository.GetBookByIdAsync(id);
-        var url = await _yandexStorageService.GetPreSignedUrlAsync(book.Image.Name, TimeSpan.FromMinutes(15));
-        book.Image.SetImageLink(url);
-        return book;
+        if(book.IsFailure)
+            return Result.Failure<Book>(book.Error);
+        
+        var url = await _yandexStorageService.GetPreSignedUrlAsync(book.Value.Image.Name, TimeSpan.FromMinutes(15));
+        book.Value.Image.SetImageLink(url);
+        return Result.Success<Book>(book.Value);
     }
     public async Task<Result> AddBookAsync(Book book)
     {

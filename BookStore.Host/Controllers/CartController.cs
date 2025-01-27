@@ -70,22 +70,66 @@ public class CartController : ControllerBase
 
         return Ok("Успешно");
     }
+
     [HttpPost("increaseQuantity")]
+    public async Task<IActionResult> IncreaseQuantity(Guid bookId)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId is null || !Guid.TryParse(userId, out var id))
+            return Unauthorized("Не авторизирован");
+        
+        var cart = await _cartService.GetCartAsync(id);
+        if (cart.IsFailure)
+            return BadRequest(cart.Error);
+        
+        var book = await _bookService.GetBookByIdAsync(bookId);
+        if(book.IsFailure)
+            return BadRequest(book.Error);
+        
+        var addBook = cart.Value.AddBook(book.Value);
+        if (addBook.IsFailure)
+            return BadRequest(addBook.Error);
+        
+        await _cartService.UpdateCart(cart.Value);
+        
+        return Ok();
+    }
+    [HttpPost("decreaseQuantityByOne")]
+    public async Task<IActionResult> decreaseQuantityByOne(Guid bookId)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId is null || !Guid.TryParse(userId, out var id))
+            return Unauthorized("Не авторизирован");
+        
+        var cart = await _cartService.GetCartAsync(id);
+        if (cart.IsFailure)
+            return BadRequest(cart.Error);
+        
+        var book = await _bookService.GetBookByIdAsync(bookId);
+        if(book.IsFailure)
+            return BadRequest(book.Error);
+        
+        var removeBook = cart.Value.RemoveBook(book.Value);
+        if(removeBook.IsFailure)
+            return BadRequest(removeBook.Error);
+        
+        await _cartService.UpdateCart(cart.Value);
+        
+        return Ok();
+    }
 
     [HttpPost("removeFromCart")]
     public async Task<IActionResult> RemoveBookFromCart(Guid bookId)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId is null || !Guid.TryParse(userId, out var id))
-        {
             return Unauthorized("Не авторизирован");
-        }
 
         var cart = await _cartService.GetCartAsync(id);
         if (cart.IsFailure)
             return BadRequest(cart.Error);
         var book = await _bookService.GetBookByIdAsync(bookId);
-        cart.Value.AddBook(book);
+        cart.Value.AddBook(book.Value);
         await _cartService.UpdateCart(cart.Value);
         
         return Ok("Успешно");

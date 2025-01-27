@@ -39,14 +39,16 @@ public class BookRepository : IBookRepository
         var books = _mapper.Map<List<Book>>(bookEntities);
         return books;
     }
-    public async Task<Book> GetBookByIdAsync(Guid id)
+    public async Task<Result<Book>> GetBookByIdAsync(Guid id)
     {
         var bookEntity = await _dbContext.Books
             .Include(b => b.Author)
             .Include(b => b.Category)
             .FirstOrDefaultAsync(x => x.Id == id);
         var book = _mapper.Map<Book>(bookEntity);
-        return book;
+        if (bookEntity is null)
+            return Result.Failure<Book>("Книга не найдена");
+        return Result.Success<Book>(book);
     }
     public async Task<Result> AddBookAsync(Book book)
     {

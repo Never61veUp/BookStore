@@ -6,7 +6,7 @@ namespace BookStore.Application.Abstractions;
 public interface IBookService
 {
     Task<List<Book>> GetAllBooksAsync();
-    Task<Book> GetBookByIdAsync(Guid id);
+    Task<Result<Book>> GetBookByIdAsync(Guid id);
     Task<List<Book>> GetBooksByCategory(Guid categoryId);
     Task<Result> AddBookAsync(Book book);
     Task<bool> UpdateBookAsync(Guid id, Book book);
