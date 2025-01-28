@@ -2,6 +2,6 @@
 
 namespace BookStore.Host.Contracts;
 
-public record LoginUserRequest(
-    [Required][EmailAddress]string Email, 
+public record SignInUserRequest(
+    [Required]string Email, 
     [Required]string Password);

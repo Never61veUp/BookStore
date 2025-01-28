@@ -33,10 +33,10 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("signIn")]
-    public async Task<IActionResult> SignIn(LoginUserRequest loginUserRequest)
+    public async Task<IActionResult> SignIn(SignInUserRequest signInUserRequest)
     {
         var token = await _userService.SignInAsync(
-            loginUserRequest.Email, loginUserRequest.Password);
+            signInUserRequest.Email, signInUserRequest.Password);
 
         if (token.IsFailure)
             return BadRequest(token.Error);

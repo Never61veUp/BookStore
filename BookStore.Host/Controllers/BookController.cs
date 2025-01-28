@@ -35,7 +35,9 @@ public class BookController : ControllerBase
     public async Task<IActionResult> GetBookByIdAsync(Guid bookId)
     {
         var book = await _bookService.GetBookByIdAsync(bookId);
-        return Ok(book);
+        if(book.IsFailure)
+            return NotFound(book);
+        return Ok(book.Value);
     }
     
     [HttpGet("category/{bookId:guid}")]
