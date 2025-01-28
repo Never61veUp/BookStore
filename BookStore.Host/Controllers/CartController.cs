@@ -1,19 +1,15 @@
 ﻿using BookStore.Application.Abstractions;
 using BookStore.Application.Services;
-using BookStore.Core.Model.Cart;
-using CSharpFunctionalExtensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CartController : ControllerBase
 {
-    private readonly ICartService _cartService;
     private readonly IBookService _bookService;
-    private readonly AuthorizationHandlerContext _context;
+    private readonly ICartService _cartService;
 
     public CartController(ICartService cartService, IBookService bookService)
     {
@@ -21,117 +17,118 @@ public class CartController : ControllerBase
         _bookService = bookService;
     }
 
-    [HttpGet("getCard")]
+    [HttpGet]
     public async Task<IActionResult> GetCart()
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId is null || !Guid.TryParse(userId, out var id))
-        {
-            return Unauthorized("Не авторизован");
-        }
+        if (!TryGetUserId(out var id))
+            return Unauthorized();
 
         var cart = await _cartService.GetCartAsync(id);
         if (cart.IsFailure)
             return BadRequest(cart.Error);
+
         return Ok(cart.Value.Books);
     }
 
-    [HttpGet("getTotalPrice")]
+    [HttpGet("total-price")]
     public async Task<IActionResult> GetTotalPrice()
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId is null || !Guid.TryParse(userId, out var id))
-        {
-            return Unauthorized("Не авторизован");
-        }
+        if (!TryGetUserId(out var id))
+            return Unauthorized();
 
         var cart = await _cartService.GetCartAsync(id);
         if (cart.IsFailure)
-            return BadRequest(cart.Error);
+            return NotFound(cart.Error);
+
         return Ok(cart.Value.GetTotalPrice().Value);
     }
 
-    [HttpPost("addToCard")]
+    [HttpPost("items")]
     public async Task<IActionResult> AddBookToCart(Guid bookId)
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId is null || !Guid.TryParse(userId, out var id))
-        {
-            return Unauthorized("Не авторизирован");
-        }
+        if (!TryGetUserId(out var id))
+            return Unauthorized();
 
-        var cart = await _cartService.GetCartAsync(id);
-        if (cart.IsFailure)
-            return BadRequest(cart.Error);
-        
         var addBookResult = await _cartService.AddBookToCartAsync(id, bookId);
         if (addBookResult.IsFailure)
             return BadRequest(addBookResult.Error);
 
-        return Ok("Успешно");
+        return Ok("Книга успешно добавлена в корзину.");
     }
 
-    [HttpPost("increaseQuantity")]
+    [HttpPatch("items/{bookId:guid}/increase")]
     public async Task<IActionResult> IncreaseQuantity(Guid bookId)
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId is null || !Guid.TryParse(userId, out var id))
-            return Unauthorized("Не авторизирован");
-        
+        if (!TryGetUserId(out var id))
+            return Unauthorized();
+
         var cart = await _cartService.GetCartAsync(id);
         if (cart.IsFailure)
             return BadRequest(cart.Error);
-        
+
         var book = await _bookService.GetBookByIdAsync(bookId);
-        if(book.IsFailure)
+        if (book.IsFailure)
             return BadRequest(book.Error);
-        
+
         var addBook = cart.Value.AddBook(book.Value);
         if (addBook.IsFailure)
             return BadRequest(addBook.Error);
-        
+
         await _cartService.UpdateCart(cart.Value);
-        
-        return Ok();
+
+        return Ok("Количество увеличено.");
     }
-    [HttpPost("decreaseQuantityByOne")]
-    public async Task<IActionResult> decreaseQuantityByOne(Guid bookId)
+
+    [HttpPatch("items/{bookId:guid}/decreaseQuantityByOne")]
+    public async Task<IActionResult> DecreaseQuantityByOne(Guid bookId)
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId is null || !Guid.TryParse(userId, out var id))
-            return Unauthorized("Не авторизирован");
-        
+        if (!TryGetUserId(out var id))
+            return Unauthorized();
+
         var cart = await _cartService.GetCartAsync(id);
         if (cart.IsFailure)
             return BadRequest(cart.Error);
-        
+
         var book = await _bookService.GetBookByIdAsync(bookId);
-        if(book.IsFailure)
+        if (book.IsFailure)
             return BadRequest(book.Error);
-        
+
         var removeBook = cart.Value.RemoveBook(book.Value);
-        if(removeBook.IsFailure)
+        if (removeBook.IsFailure)
             return BadRequest(removeBook.Error);
-        
+
         await _cartService.UpdateCart(cart.Value);
-        
+
         return Ok();
     }
 
-    [HttpPost("removeFromCart")]
+    [HttpDelete("items/{bookId:guid}")]
     public async Task<IActionResult> RemoveBookFromCart(Guid bookId)
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId is null || !Guid.TryParse(userId, out var id))
-            return Unauthorized("Не авторизирован");
+        if (!TryGetUserId(out var id))
+            return Unauthorized();
 
         var cart = await _cartService.GetCartAsync(id);
         if (cart.IsFailure)
             return BadRequest(cart.Error);
+
         var book = await _bookService.GetBookByIdAsync(bookId);
+        if (book.IsFailure)
+            return BadRequest(book.Error);
+
         cart.Value.AddBook(book.Value);
         await _cartService.UpdateCart(cart.Value);
-        
-        return Ok("Успешно");
+
+        return Ok("Книга удалена из корзины.");
+    }
+
+    private bool TryGetUserId(out Guid id)
+    {
+        id = Guid.Empty;
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId is null || !Guid.TryParse(userId, out id))
+            return false;
+
+        return true;
     }
 }

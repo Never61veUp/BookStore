@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers;
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoriesService _categoriesService;
@@ -19,26 +19,26 @@ public class CategoriesController : ControllerBase
     [HttpGet("GetCategories")]
     public async Task<IActionResult> GetCategories()
     {
-        return Ok(await _categoriesService.GetCategories());
+        var categories = await _categoriesService.GetCategories();
+        return Ok(categories);
     }
     
-    [HttpGet("GetBookById/{id}")]
-    public async Task<IActionResult> GetCategoryById(Guid bookId)
+    [HttpGet("GetBookById/{id:guid}")]
+    public async Task<IActionResult> GetCategoryById(Guid categoryId)
     {
-        var book = await _categoriesService.GetCategoryById(bookId);
-        return Ok(book);
+        var category = await _categoriesService.GetCategoryById(categoryId);
+        return Ok(category);
     }
 
-    [HttpPost("AddBook")]
+    [HttpPost("AddCategory")]
     public async Task<IActionResult> AddCategory(CategoryRequest categoryRequest)
     {
         var category = Category.Create(
             Guid.NewGuid(), categoryRequest.Title, categoryRequest.ParentId);
-        
         if(category.IsFailure)
             return BadRequest(category);
         
         await _categoriesService.CreateCategory(category.Value);
-        return Ok(category.Value);
+        return CreatedAtAction(nameof(GetCategoryById), new { id = category.Value.Id }, category.Value);
     }
 }

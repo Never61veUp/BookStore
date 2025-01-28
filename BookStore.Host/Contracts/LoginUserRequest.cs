@@ -1,3 +1,7 @@
-﻿namespace BookStore.Host.Contracts;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record LoginUserRequest(string Email, string Password);
+namespace BookStore.Host.Contracts;
+
+public record LoginUserRequest(
+    [Required][EmailAddress]string Email, 
+    [Required]string Password);

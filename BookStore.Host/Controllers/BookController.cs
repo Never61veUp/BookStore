@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers;
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
@@ -23,26 +23,29 @@ public class BookController : ControllerBase
         _imageService = imageService;
     }
 
-    [HttpGet("GetBooks")]
+    [HttpGet]
     public async Task<IActionResult> GetBooks()
     {
-        return Ok(await _bookService.GetAllBooksAsync());
+        var books = await _bookService.GetAllBooksAsync();
+        if(books.Count <= 0) return NotFound("Книги не найдены");
+        
+        return Ok(books);
     }
-    [HttpGet("GetBookById")]
+    [HttpGet("{bookId:guid}")]
     public async Task<IActionResult> GetBookByIdAsync(Guid bookId)
     {
         var book = await _bookService.GetBookByIdAsync(bookId);
         return Ok(book);
     }
     
-    [HttpGet("GetBookByCategoryId")]
+    [HttpGet("category/{bookId:guid}")]
     public async Task<IActionResult> GetBookByCategoryIdAsync(Guid bookId)
     {
         var book = await _bookService.GetBooksByCategory(bookId);
         return Ok(book);
     }
 
-    [HttpPost("AddBook")]
+    [HttpPost]
     public async Task<IActionResult> AddBookAsync([FromForm] BookRequest bookRequest)
     {
         var price = Price.Create(bookRequest.Price);
@@ -71,7 +74,7 @@ public class BookController : ControllerBase
         return Ok(book.Value);
     }
     
-    [HttpPut("UpdateBook")]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateBook(Guid id, [FromForm] BookRequest bookRequest)
     {
         
@@ -100,10 +103,10 @@ public class BookController : ControllerBase
         return Ok(book.Value);
     }
     
-    [HttpDelete("DeleteBook")]
-    public async Task<IActionResult> DeleteBook(Guid id)
+    [HttpDelete("{bookId:guid}")]
+    public async Task<IActionResult> DeleteBook(Guid bookId)
     {
-        var updateBookTask = await _bookService.DeleteBookAsync(id);
+        var updateBookTask = await _bookService.DeleteBookAsync(bookId);
         return Ok(updateBookTask);
     }
 }

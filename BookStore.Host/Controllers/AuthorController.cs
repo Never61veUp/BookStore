@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Host.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AuthorController : ControllerBase
 {
     private readonly IAuthorService _authorService;
@@ -18,14 +18,14 @@ public class AuthorController : ControllerBase
         _authorService = authorService;
     }
     
-    [HttpGet("GetAuthors")]
+    [HttpGet]
     public async Task<IActionResult> GetAuthors()
     {
         var result = await _authorService.GetAllAuthorsAsync();
         return Ok(result);
     }
     
-    [HttpPost("AddAuthor")]
+    [HttpPost]
     public async Task<IActionResult> AddAuthor(AuthorRequest request)
     {
         var fullName = FullName.Create(request.FirstName, request.LastName, request.MiddleName);

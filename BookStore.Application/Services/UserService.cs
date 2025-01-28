@@ -25,6 +25,7 @@ public class UserService : IUserService
     public async Task<Result> SignUpAsync(string firstName, string lastName, 
         string email, string password, string? middleName = "")
     {
+        
         var fullName = FullName.Create(firstName, lastName, middleName);
         if(fullName.IsFailure)
             return Result.Failure(fullName.Error);
