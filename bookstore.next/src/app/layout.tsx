@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {Geist, Geist_Mono, Nunito} from "next/font/google";
 import "./globals.css";
 import {
     Menubar,
@@ -26,6 +26,16 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+import { Inter } from 'next/font/google'
+
+// If loading a variable font, you don't need to specify the font weight
+const inter = Inter({ subsets: ['latin'] })
+
+const nunito = Nunito({
+    subsets: ["cyrillic"],
+    variable: "--font-nunito",
+    weight: ["400", "500", "600", "700", "800", "900"],
+});
 
 export default function RootLayout({
   children,
@@ -33,10 +43,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" >
+      <body className={nunito.className}>
       <AuthProvider>
-          <Header />
+          <Header/>
           {children}
           <Footer />
           <ToastContainer

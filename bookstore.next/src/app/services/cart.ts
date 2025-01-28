@@ -20,8 +20,9 @@ export const addToCart = async (bookId: string) => {
     }
 };
 export const getCart = async (): Promise<CartResponse[]> => {
-    const response = await fetch(`http://localhost:5263/Cart/getCard`, {
+    const response = await fetch(`http://localhost:5263/api/Cart`, {
         credentials: 'include',
+        method: 'GET'
     })
     if (!response.ok) {
         const error = await response.text();
@@ -31,7 +32,7 @@ export const getCart = async (): Promise<CartResponse[]> => {
 
 }
 export const getTotalPrice = async (): Promise<number> => {
-    const response = await fetch(`http://localhost:5263/Cart/getTotalPrice`, {
+    const response = await fetch(`http://localhost:5263/api/Cart/total-price`, {
         credentials: 'include',
     })
     if (!response.ok) {
@@ -41,8 +42,8 @@ export const getTotalPrice = async (): Promise<number> => {
     return await response.json();
 }
  export const increaseByOne = async (bookId: string) => {
-     const response = await fetch(`http://localhost:5263/Cart/increaseQuantity?bookId=${bookId}`, {
-         method: "POST",
+     const response = await fetch(`http://localhost:5263/api/Cart/items/${bookId}/increase`, {
+         method: "PATCH",
          credentials: 'include',
      })
      if (!response.ok) {
@@ -51,8 +52,8 @@ export const getTotalPrice = async (): Promise<number> => {
      }
  }
  export const decreaseByOne = async (bookId: string) => {
-     const response = await fetch(`http://localhost:5263/Cart/decreaseQuantityByOne?bookId=${bookId}`, {
-         method: "POST",
+     const response = await fetch(`http://localhost:5263/api/Cart/items/${bookId}/decreaseQuantityByOne`, {
+         method: "PATCH",
          credentials: 'include',
      })
      if (!response.ok) {

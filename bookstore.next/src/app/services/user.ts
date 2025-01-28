@@ -12,7 +12,7 @@ export interface SignInRequest {
 
 export const signUp = async (data: SignUpRequest) => {
     console.log("Request Data:", data);
-    await fetch("http://localhost:5263/User/api/user/register", {
+    await fetch("http://localhost:5263/api/user/signUp", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -22,7 +22,7 @@ export const signUp = async (data: SignUpRequest) => {
 };
 
 export async function signIn(email: string, password: string) {
-    const response = await fetch('http://localhost:5263/User/api/user/signIn', {
+    const response = await fetch('http://localhost:5263/api/user/signIn', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signOut() {
-    const response = await fetch('http://localhost:5263/User/api/user/signOut', {
+    const response = await fetch('http://localhost:5263/api/user/signOut', {
         method: 'POST',
         credentials: 'include', // Чтобы учитывать куки
     });
@@ -51,7 +51,7 @@ export async function signOut() {
     }
 }
 export async function isLoggedIn(): Promise<boolean> {
-    const response = await fetch('http://localhost:5263/User/api/user/isLoggedIn', {
+    const response = await fetch('http://localhost:5263/api/user/isLoggedIn', {
         method: 'GET',
         credentials: 'include',
     });

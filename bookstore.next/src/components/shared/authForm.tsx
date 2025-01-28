@@ -3,13 +3,11 @@ import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components
 import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {Input} from "@/components/ui/input";
-import React from "react";
-import {useState} from "react";
-import {signIn, signUp, SignUpRequest} from "@/app/services/user";
+import React, {useState} from "react";
+import {signUp, SignUpRequest} from "@/app/services/user";
 import Link from "next/link";
-import {notifyError, notifySuccess} from "@/app/layout";
 import {useRouter} from "next/navigation";
-import {AuthProvider, useAuth} from "@/app/auth-context";
+import {useAuth} from "@/app/auth-context";
 
 export interface Props {
     mode: Mode;
@@ -44,15 +42,7 @@ export const AuthForm = ({mode}: Props) => {
         await signUp(request);
     }
     const handleSignIn = async(email: string, password: string) => {
-        try {
-            await login(email, password);
-            notifySuccess("Успешная авторизация");
-            router.push("/catalog");
-        } catch (err) {
-            if (err instanceof Error) {
-                notifyError(err.message);
-            }
-        }
+        await login(email, password);
     }
 
     return (

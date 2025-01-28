@@ -1,7 +1,9 @@
 ﻿"use client"
 import React, {createContext, useContext, useState, ReactNode, useEffect} from "react";
 import Cookies from "js-cookie";
-import { signIn, signOut } from "@/app/services/user";  // предполагается, что у вас есть эти функции
+import { signIn, signOut } from "@/app/services/user";
+import {notifyError, notifySuccess} from "@/app/layout";
+import {useRouter} from "next/navigation";  // предполагается, что у вас есть эти функции
 
 interface AuthContextType {
     loggedIn: boolean;
@@ -13,23 +15,28 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
-    const [roles, setRoles] = useState<string[]>([]);
+    // const [roles, setRoles] = useState<string[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         const token = Cookies.get("tasty-cookies");
         if (token) {
             setLoggedIn(true);
-            const decodedToken = JSON.parse(atob(token.split(".")[1]));
-            setRoles(decodedToken.roles || []);
+            // const decodedToken = JSON.parse(atob(token.split(".")[1]));
+            // setRoles(decodedToken.roles || []);
         }
     }, []);
 
     const login = async (email: string, password: string) => {
         try {
             await signIn(email, password);
+            notifySuccess("Успешная авторизация");
+            router.push("/catalog");
             setLoggedIn(true);
         } catch (err) {
-            console.error(err);
+            if (err instanceof Error) {
+                notifyError(err.message);
+            }
         }
     };
 
