@@ -39,7 +39,7 @@ public class OrderController : ControllerBase
         if (cart.IsFailure)
             return BadRequest(cart.Error);
         
-        var result = await _orderService.CreateOrder(userId, cart.Value.Books);
+        var result = await _orderService.CreateOrder(userId, cart.Value);
         if(result.IsFailure)
             return BadRequest(result.Error);
         return Ok("Order created");

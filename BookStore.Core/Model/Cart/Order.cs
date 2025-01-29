@@ -22,6 +22,11 @@ public class Order
     {
         return new Order(userId, books, orderStatus, orderDate);
     }
+    public static Result<Order> Create(Guid userId, Dictionary<Book, int> books, OrderStatus orderStatus, DateTime orderDate, ref Cart cart)
+    {
+        cart.Clear();
+        return new Order(userId, books, orderStatus, orderDate);
+    }
     
     public Guid UserId { get; private set; }
     public Dictionary<Book, int> Books { get; private set; }

@@ -48,7 +48,7 @@ public class BookService : IBookService
         
         var url = await _yandexStorageService.GetPreSignedUrlAsync(book.Value.Image.Name, TimeSpan.FromMinutes(15));
         book.Value.Image.SetImageLink(url);
-        return Result.Success<Book>(book.Value);
+        return Result.Success(book.Value);
     }
     public async Task<Result> AddBookAsync(Book book)
     {

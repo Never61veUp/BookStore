@@ -8,6 +8,7 @@ using BookStore.Host.Services;
 using BookStore.PostgreSql;
 using BookStore.PostgreSql.Mapper;
 using BookStore.PostgreSql.Repositories;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 
@@ -23,7 +24,10 @@ services.AddControllers().AddJsonOptions(options =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddOpenApi();
-
+services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
+});
 
 // var authConfig = configuration.GetSection(nameof(AuthorizationOptions));
 // services.Configure<AuthorizationOptions>(configuration.GetSection(nameof(AuthorizationOptions)));

@@ -22,36 +22,41 @@ public class OrderRepository : IOrderRepository
     {
         var orderEntities = await _dbContext.Orders
             .Where(o => o.UserId == userId)
-            .Include(o => o.OrderItems) // Загружаем OrderItems сразу
+            .Include(o => o.OrderItems)
             .ToListAsync();
         if (orderEntities.Count == 0)
         {
             return Result.Success<IEnumerable<Order>>(new List<Order>());
         }
         
-        var orderItemEntities = orderEntities.SelectMany(o => o.OrderItems).ToList();
-        var bookIds = orderItemEntities.Select(x => x.BookId).Distinct().ToList();
+        var orderItems = orderEntities.SelectMany(o => o.OrderItems).ToList();
+        var bookIds = orderItems.Select(x => x.BookId).Distinct().ToList();
         var bookEntitiesById = await GetBooksByIdsAsync(bookIds);
 
-        var bookResults = MapCartItemsToBooks(orderItemEntities, bookEntitiesById);
-
-        if (bookResults.Any(r => r.IsFailure))
-        {
-            var firstError = bookResults.First(r => r.IsFailure).Error;
-            return Result.Failure<IEnumerable<Order>>(firstError);
-        }
-
-        var bookDictionary = bookResults
-            .Select(r => r.Value)
-            .GroupBy(x => x.Item1)
-            .ToDictionary(g => g.Key, g => g.Sum(x => x.Item2));
-
         var orders = orderEntities
-            .Select(entity => Order.Create(
-                entity.UserId,
-                bookDictionary,
-                entity.OrderStatus,
-                entity.OrderDate))
+            .Select(entity =>
+            {
+                var orderItemEntities = entity.OrderItems;
+
+                var bookResultsForOrder = MapCartItemsToBooks(orderItemEntities, bookEntitiesById);
+
+                if (bookResultsForOrder.Any(r => r.IsFailure))
+                {
+                    var firstError = bookResultsForOrder.First(r => r.IsFailure).Error;
+                    return Result.Failure<Order>(firstError);
+                }
+
+                var bookDictionaryForOrder = bookResultsForOrder
+                    .Select(r => r.Value)
+                    .GroupBy(x => x.Item1)
+                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Item2));
+
+                return Order.Create(
+                    entity.UserId,
+                    bookDictionaryForOrder,
+                    entity.OrderStatus,
+                    entity.OrderDate);
+            })
             .ToList();
 
         if (orders.Any(r => r.IsFailure))

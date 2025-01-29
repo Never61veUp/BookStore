@@ -72,4 +72,6 @@ public class Cart : IAggregateRoot
             
         return Result.Success();
     }
+
+    public void Clear() => Books.Clear();
 }
