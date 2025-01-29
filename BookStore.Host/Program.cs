@@ -36,6 +36,8 @@ services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 services.AddScoped<ICategoriesService, CategoriesService>();
 services.AddScoped<ICartService, CartService>();
 services.AddScoped<ICartRepository, CartRepository>();
+services.AddScoped<IOrderRepository, OrderRepository>();
+services.AddScoped<IOrderService, OrderService>();
 
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IUserService, UserService>();

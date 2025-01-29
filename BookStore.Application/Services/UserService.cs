@@ -25,6 +25,9 @@ public class UserService : IUserService
     public async Task<Result> SignUpAsync(string firstName, string lastName, 
         string email, string password, string? middleName = "")
     {
+        var emails = await _userRepository.GetEmailCollection();
+        if(emails.IsFailure)
+            return Result.Failure(emails.Error);
         
         var fullName = FullName.Create(firstName, lastName, middleName);
         if(fullName.IsFailure)
@@ -32,7 +35,7 @@ public class UserService : IUserService
         
         var hashedPassword = _passwordHasher.GenerateHash(password);
         
-        var user =  User.Create(Guid.NewGuid(), fullName.Value, email, hashedPassword);
+        var user =  User.Create(Guid.NewGuid(), fullName.Value, email, hashedPassword, emails.Value);
         if(user.IsFailure)
             return Result.Failure(user.Error);
         

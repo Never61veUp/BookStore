@@ -21,6 +21,8 @@ public class BookStoreDbContext(
     public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<CartEntity> Carts { get; set; }
     public DbSet<CartItemEntity> CartItems { get; set; }
+    public DbSet<OrderEntity> Orders { get; set; }
+    public DbSet<OrderItemEntity> OrderItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +35,8 @@ public class BookStoreDbContext(
         modelBuilder.ApplyConfiguration(new PermissionConfiguration());
         modelBuilder.ApplyConfiguration(new CartConfiguration());
         modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
         
         base.OnModelCreating(modelBuilder);
     }

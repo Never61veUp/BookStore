@@ -11,6 +11,7 @@ public interface IUserRepository
     Task<Result> AddUserAsync(User user);
     Task<Result<User>> GetUserByEmail(string email);
     Task<Result<HashSet<Permission>>> GetUserPermissions(Guid userId);
+    Task<Result<string[]>> GetEmailCollection();
 }
 
 public class UserRepository : IUserRepository
@@ -70,5 +71,14 @@ public class UserRepository : IUserRepository
             .SelectMany(r => r.GlobalPermissions)
             .Select(p => (Permission)p.Id)
             .ToHashSet();
+    }
+
+    public async Task<Result<string[]>> GetEmailCollection()
+    {
+        var emails = await _dbContext.Users.AsNoTracking().Select(e => e.Email).ToArrayAsync();
+        if(emails.Length == 0)
+            return Result.Failure<string[]>("Email address not found");
+        
+        return emails;
     }
 }
