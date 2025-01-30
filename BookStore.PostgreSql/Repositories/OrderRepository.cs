@@ -70,12 +70,12 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Result> CreateOrder(Order order)
     {
-        var orderEntity = new OrderEntity()
+        var orderEntity = new OrderEntity(Guid.NewGuid())
         {
             UserId = order.UserId,
             OrderStatus = order.OrderStatus,
         };
-        var orderItems = order.Books.Select(x => new OrderItemEntity()
+        var orderItems = order.Books.Select(x => new OrderItemEntity(Guid.NewGuid())
         {
             BookId = x.Key.Id,
             Order = orderEntity,
@@ -83,9 +83,9 @@ public class OrderRepository : IOrderRepository
         }).ToList();
         orderEntity.OrderItems = orderItems;
         _dbContext.Orders.Add(orderEntity);
-        _dbContext.OrderItems.AddRange(orderItems);
+        await _dbContext.OrderItems.AddRangeAsync(orderItems);
         var result = await _dbContext.SaveChangesAsync() > 0
-            ? Result.Success()
+            ? Result.Success("Success")
             : Result.Failure("Cart could not be updated.");
 
         return result;
