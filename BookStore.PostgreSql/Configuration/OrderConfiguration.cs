@@ -13,5 +13,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<OrderEntity>
         builder.HasMany<OrderItemEntity>(x => x.OrderItems)
             .WithOne(o => o.Order)
             .HasForeignKey(o => o.OrderId);
+        builder.Property(x => x.OrderDate).HasColumnType("timestamp")
+            .IsRequired();
     }
 }

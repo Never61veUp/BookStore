@@ -74,6 +74,7 @@ public class OrderRepository : IOrderRepository
         {
             UserId = order.UserId,
             OrderStatus = order.OrderStatus,
+            OrderDate = order.OrderDate,
         };
         var orderItems = order.Books.Select(x => new OrderItemEntity(Guid.NewGuid())
         {

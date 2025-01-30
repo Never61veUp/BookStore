@@ -22,9 +22,9 @@ public class Order
     {
         return new Order(userId, books, orderStatus, orderDate);
     }
-    public static Result<Order> Create(Guid userId, Dictionary<Book, int> books, OrderStatus orderStatus, DateTime orderDate, Cart cart)
+    public static Result<Order> Create(Guid userId, Dictionary<Book, int> books, OrderStatus orderStatus, Cart cart)
     {
-        var order = new Order(userId, new Dictionary<Book, int>(books), orderStatus, orderDate);
+        var order = new Order(userId, new Dictionary<Book, int>(books), orderStatus, DateTime.Now);
         cart.Clear();
         return order;
     }

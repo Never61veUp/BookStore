@@ -24,7 +24,7 @@ public class OrderService : IOrderService
 
     public async Task<Result> CreateOrder(Guid userId, Cart cart)
     {
-        var order = Order.Create(userId, cart.Books, OrderStatus.Pending, DateTime.Now, cart);
+        var order = Order.Create(userId, cart.Books, OrderStatus.Pending, cart);
         if(order.IsFailure)
             return Result.Failure<Order>(order.Error);
         
